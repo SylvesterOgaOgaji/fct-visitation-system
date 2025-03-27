@@ -1,0 +1,15 @@
+# Java-specific gitignore
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+.vscode/
+.idea/
+*.iml
+eclipse/
+
+# Environment files
+.env
+application-local.properties
