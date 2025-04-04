@@ -30,3 +30,17 @@ target/
 target/ >> .gitignore*/src/main/**/target/
 application-dev.properties
 application-prod.properties
+Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+Deployment
+deploy.sh
+deployment/
+Logs
+logs/
+*.log
+IDE-specific files
+.idea/
+.vscode/
+*.iml
