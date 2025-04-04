@@ -1,0 +1,42 @@
+name: FCT Visitation Mobile App CI
+
+on:
+  push:
+    branches: [ main, development ]
+    paths:
+      - 'fct-visitation-mobile/**'
+      - '.github/workflows/mobile-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'fct-visitation-mobile/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./fct-visitation-mobile/fct-visitor-app
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: './fct-visitation-mobile/fct-visitor-app/package-lock.json'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build
+      run: npm run build -- --configuration=production
+      
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: fct-visitor-app-web
+        path: www/

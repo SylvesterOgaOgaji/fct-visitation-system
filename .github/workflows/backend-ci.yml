@@ -1,0 +1,40 @@
+name: FCT Visitation System Backend CI
+
+on:
+  push:
+    branches: [ main, development ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Build with Maven
+      run: mvn -B clean package -DskipTests
+      
+    - name: Run Tests
+      run: mvn -B test
+      
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: fct-visitation-system-jar
+        path: target/*.jar
