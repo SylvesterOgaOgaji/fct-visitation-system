@@ -1,15 +1,32 @@
-# Java-specific gitignore
-target/
+# Compiled class file
 *.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
 *.jar
 *.war
+*.nar
 *.ear
-*.logs
-.vscode/
-.idea/
-*.iml
-eclipse/
+*.zip
+*.tar.gz
+*.rar
 
-# Environment files
-.env
-application-local.properties
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+HELP.md
+.gradle
+build/
+build/ >> .gitignore*/src/main/**/build/
+target/
+target/ >> .gitignore*/src/main/**/target/
+application-dev.properties
+application-prod.properties
