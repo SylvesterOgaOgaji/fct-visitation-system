@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Visitor Registration</title>
+</head>
+<body>
+    <div th:replace="~{layout/main :: content(~{::div.container})}">
+        <div class="container">
+            <h2 id="pageTitle">New Visitor Registration</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form th:action="@{/visitor/register}" th:object="${visitor}" method="post" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                            <div class="invalid-feedback">First name is required</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                            <div class="invalid-feedback">Last name is required</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                            <div class="invalid-feedback">Valid email is required</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                            <div class="invalid-feedback">Phone number is required</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="nin" class="form-label">National ID Number (NIN)</label>
+                            <input type="text" class="form-control" id="nin" th:field="*{nin}" required>
+                            <div class="invalid-feedback">NIN is required</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="facility" class="form-label">Facility to Visit</label>
+                            <select class="form-select" id="facility" th:field="*{facility}" required>
+                                <option value="">Select Facility</option>
+                                <option th:each="facility : ${facilities}" 
+                                        th:value="${facility.facilityId}" 
+                                        th:text="${facility.facilityName}"></option>
+                            </select>
+                            <div class="invalid-feedback">Please select a facility</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="carType" class="form-label">Transport Type</label>
+                            <select class="form-select" id="carType" th:field="*{carType}" required>
+                                <option value="">Select Type</option>
+                                <option th:each="type : ${T(com.fct.visitation.models.entity.Visitor.CarType).values()}" 
+                                        th:value="${type}" 
+                                        th:text="${type}"></option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="appointmentDateTime" class="form-label">Appointment Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="appointmentDateTime" th:field="*{appointmentDateTime}" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Register Visit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
