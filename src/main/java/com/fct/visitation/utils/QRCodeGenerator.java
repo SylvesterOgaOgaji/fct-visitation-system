@@ -12,17 +12,15 @@ import java.io.IOException;
 import java.util.Base64;
 
 @Component
-public class QRCodeGenerator {
-
+public class QRCodeGenerator implements QRCodeGeneratorInterface {
+    @Override
     public String generateQRCodeImage(String text, int width, int height) {
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
-            
             ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
             byte[] pngData = pngOutputStream.toByteArray();
-            
             return Base64.getEncoder().encodeToString(pngData);
         } catch (WriterException | IOException e) {
             throw new RuntimeException("Error generating QR Code", e);

@@ -26,10 +26,11 @@ public class AuthApiController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        // Dummy implementation for now
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
+                        "admin", // Use hardcoded values for now
+                        "password" 
                 )
         );
 

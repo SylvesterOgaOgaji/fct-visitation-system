@@ -1,5 +1,6 @@
 package com.fct.visitation.integration;
 
+import com.fct.visitation.BaseIntegrationTest;
 import com.fct.visitation.models.entity.Facility;
 import com.fct.visitation.models.entity.Officer;
 import com.fct.visitation.models.entity.PurposeOfVisit;
@@ -12,24 +13,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Transactional
-public class VisitorIntegrationTest {
+public class VisitorIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,8 +36,7 @@ public class VisitorIntegrationTest {
 
     @Autowired
     private OfficerRepository officerRepository;
-
-    @Autowired
+@Autowired
     private PurposeOfVisitRepository purposeOfVisitRepository;
 
     private Facility facility;
@@ -52,29 +45,30 @@ public class VisitorIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Create test data
+        // Create test facility
         facility = new Facility();
         facility.setFacilityName("Test Facility");
         facility.setAddress("Test Address");
         facility.setContactNumber("08012345678");
         facility.setEmail("test@facility.com");
-        facilityRepository.save(facility);
+        facility = facilityRepository.save(facility);
 
+        // Create test officer
         officer = new Officer();
         officer.setName("Test Officer");
         officer.setPosition("Test Position");
         officer.setDepartment("Test Department");
         officer.setDutyStatus(Officer.DutyStatus.ON_DUTY);
         officer.setFacility(facility);
-        officerRepository.save(officer);
+        officer = officerRepository.save(officer);
 
+        // Create test purpose of visit
         purposeOfVisit = new PurposeOfVisit();
         purposeOfVisit.setDescription("Test Purpose");
         purposeOfVisit.setFacility(facility);
-        purposeOfVisitRepository.save(purposeOfVisit);
+        purposeOfVisit = purposeOfVisitRepository.save(purposeOfVisit);
     }
-
-    @Test
+@Test
     @WithMockUser
     void testVisitorRegistrationFlow() throws Exception {
         // First access the registration form
@@ -98,8 +92,7 @@ public class VisitorIntegrationTest {
                 .param("purposeOfVisit.purposeId", purposeOfVisit.getPurposeId().toString())
                 .param("appointmentDateTime", LocalDateTime.now().plusDays(1).toString()))
                 .andExpect(status().is3xxRedirection());
-
-        // Verify the visitor was created
+ // Verify the visitor was created
         Visitor createdVisitor = visitorRepository.findByEmail("integration.test@example.com").orElseThrow();
         
         // Then check the confirmation page

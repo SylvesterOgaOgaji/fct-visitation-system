@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/qr")
 public class QRCodeApiController {
@@ -26,12 +23,7 @@ public class QRCodeApiController {
         return visitorService.findByQrCode(qrCode)
                 .map(visitor -> {
                     QRScanLog scanLog = qrScanLogService.recordScan(visitor, checkpointId);
-                    
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("visitor", visitor);
-                    response.put("scanLog", scanLog);
-                    
-                    return ResponseEntity.ok(response);
+                    return ResponseEntity.ok("Scan recorded successfully");
                 })
                 .orElse(ResponseEntity.badRequest().body("Invalid QR Code"));
     }

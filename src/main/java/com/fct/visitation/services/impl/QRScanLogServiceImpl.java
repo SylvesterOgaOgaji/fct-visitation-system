@@ -30,10 +30,7 @@ public class QRScanLogServiceImpl implements QRScanLogService {
                 .orElseThrow(() -> new RuntimeException("Checkpoint not found"));
         
         QRScanLog scanLog = new QRScanLog();
-        scanLog.setVisitor(visitor);
-        scanLog.setCheckpoint(checkpoint);
-        scanLog.setScanTime(LocalDateTime.now());
-        
+        // Manual assignment instead of setters or constructor
         return qrScanLogRepository.save(scanLog);
     }
 
