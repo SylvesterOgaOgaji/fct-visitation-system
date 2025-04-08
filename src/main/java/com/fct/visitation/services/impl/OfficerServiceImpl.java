@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OfficerServiceImpl implements OfficerService {
@@ -19,7 +20,7 @@ public class OfficerServiceImpl implements OfficerService {
         this.officerRepository = officerRepository;
     }
 
-@Override
+    @Override
     public List<Officer> findAll() {
         return officerRepository.findAll();
     }
@@ -28,10 +29,11 @@ public class OfficerServiceImpl implements OfficerService {
     public Optional<Officer> findById(Long id) {
         return officerRepository.findById(id);
     }
-
-    @Override
+ @Override
     public List<Officer> findByFacilityId(Long facilityId) {
-        return officerRepository.findByFacilityFacilityId(facilityId);
+        return officerRepository.findAll().stream()
+                .filter(officer -> officer.getFacility().getFacilityId().equals(facilityId))
+                .collect(Collectors.toList());
     }
 
     @Override
