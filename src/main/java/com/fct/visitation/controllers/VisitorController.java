@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/visitor")
@@ -23,7 +24,7 @@ public class VisitorController {
     public VisitorController(VisitorService visitorService, 
                             FacilityService facilityService,
                             OfficerService officerService,
-                            PurposeOfVisitService purposeOfVisitService) {
+PurposeOfVisitService purposeOfVisitService) {
         this.visitorService = visitorService;
         this.facilityService = facilityService;
         this.officerService = officerService;
@@ -36,12 +37,10 @@ public class VisitorController {
         model.addAttribute("facilities", facilityService.findAll());
         return "visitor/registration";
     }
-    
-    @PostMapping("/register")
-    public String registerVisitor(@ModelAttribute Visitor visitor) {
+@PostMapping("/register")
+    public String registerVisitor(@ModelAttribute Visitor visitor, RedirectAttributes redirectAttributes) {
         Visitor registeredVisitor = visitorService.registerVisitor(visitor);
-        // Use simple approach for now, we'll fix the property access later
-        return "redirect:/visitor/confirmation?id=1";
+        return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();
     }
     
     @GetMapping("/confirmation")
@@ -54,8 +53,7 @@ public class VisitorController {
     public String checkInVisitor(@PathVariable String qrCode, Model model) {
         Visitor visitor = visitorService.findByQrCode(qrCode)
                 .orElseThrow(() -> new RuntimeException("Invalid QR Code"));
-        // Use simple approach for now, we'll fix the property access later
-        visitor = visitorService.checkInVisitor(1L);
+        visitor = visitorService.checkInVisitor(visitor.getVisitorId());
         model.addAttribute("visitor", visitor);
         return "visitor/checked-in";
     }
