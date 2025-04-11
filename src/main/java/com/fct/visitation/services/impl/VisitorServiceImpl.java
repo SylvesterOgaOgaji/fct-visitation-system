@@ -1,5 +1,6 @@
 package com.fct.visitation.services.impl;
 
+import com.fct.visitation.exceptions.WeeklyVisitLimitException;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.repositories.VisitorRepository;
 import com.fct.visitation.services.interfaces.VisitorService;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +33,29 @@ public class VisitorServiceImpl implements VisitorService {
         this.visitorRepository = visitorRepository;
         this.qrCodeGenerator = qrCodeGenerator;
     }
- @Override
+    @Override
     public Visitor registerVisitor(Visitor visitor) {
-        // Generate unique QR code content
+        // Check if a visitor with the same email already exists
+        Optional<Visitor> existingVisitorOpt = visitorRepository.findByEmail(visitor.getEmail());
+        
+        if (existingVisitorOpt.isPresent()) {
+            Visitor existingVisitor = existingVisitorOpt.get();
+            
+            // Calculate the date one week ago
+            LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+            
+            // Check if the existing visitor's appointment was less than a week ago
+            if (existingVisitor.getAppointmentDateTime().isAfter(oneWeekAgo)) {
+                throw new WeeklyVisitLimitException("You can only register for a visit once per week. Your last appointment was on " 
+                    + existingVisitor.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            }
+            // If it's been more than a week, allow the new registration
+        }
+        
+        // Continue with registration
         String qrCodeContent = generateQrCode(visitor);
         visitor.setQrCode(qrCodeContent);
         
-        // Generate and store QR code data as Base64
         String qrCodeData = generateBase64QRCode(qrCodeContent);
         visitor.setQrCodeData(qrCodeData);
         

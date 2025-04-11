@@ -1,5 +1,6 @@
 package com.fct.visitation.controllers;
 
+import com.fct.visitation.exceptions.WeeklyVisitLimitException;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.services.interfaces.FacilityService;
 import com.fct.visitation.services.interfaces.OfficerService;
@@ -39,9 +40,27 @@ public class VisitorController {
     }
     
     @PostMapping("/register")
-    public String registerVisitor(@ModelAttribute Visitor visitor, RedirectAttributes redirectAttributes) {
-        Visitor registeredVisitor = visitorService.registerVisitor(visitor);
-        return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();
+    public String registerVisitor(@ModelAttribute Visitor visitor, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Visitor registeredVisitor = visitorService.registerVisitor(visitor);
+            return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();
+        } catch (WeeklyVisitLimitException e) {
+            // Add error message to the model
+            model.addAttribute("errorMessage", e.getMessage());
+            
+            // Re-populate the form with necessary data
+            model.addAttribute("visitor", visitor);
+            model.addAttribute("facilities", facilityService.findAll());
+            
+            // If facility is selected, load related officers and purposes
+            if (visitor.getFacility() != null && visitor.getFacility().getFacilityId() != null) {
+                model.addAttribute("officers", officerService.findByFacilityId(visitor.getFacility().getFacilityId()));
+                model.addAttribute("purposes", purposeOfVisitService.findByFacilityId(visitor.getFacility().getFacilityId()));
+            }
+            
+            // Return to the registration form
+            return "visitor/registration";
+        }
     }
     
     @GetMapping("/confirmation")
