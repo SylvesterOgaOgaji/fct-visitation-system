@@ -27,7 +27,7 @@ public class FacilityApiController {
         this.purposeOfVisitService = purposeOfVisitService;
     }
 
- @GetMapping("/{facilityId}/officers")
+    @GetMapping("/{facilityId}/officers")
     public ResponseEntity<List<Officer>> getOfficersByFacility(@PathVariable Long facilityId) {
         List<Officer> officers = officerService.findByFacilityId(facilityId);
         return ResponseEntity.ok(officers);

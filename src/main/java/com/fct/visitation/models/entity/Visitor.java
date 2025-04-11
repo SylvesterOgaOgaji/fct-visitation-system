@@ -63,6 +63,10 @@ public class Visitor {
     @Column(unique = true)
     private String qrCode;
     
+    // Add this new field to resolve the database error
+    @Column(name = "qr_code_data", columnDefinition = "TEXT", nullable = true)
+    private String qrCodeData;
+    
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -110,6 +114,10 @@ public class Visitor {
     
     public String getQrCode() { return this.qrCode; }
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+    
+    // Add getter and setter for qrCodeData
+    public String getQrCodeData() { return this.qrCodeData; }
+    public void setQrCodeData(String qrCodeData) { this.qrCodeData = qrCodeData; }
     
     // Enums
     public enum CarType {

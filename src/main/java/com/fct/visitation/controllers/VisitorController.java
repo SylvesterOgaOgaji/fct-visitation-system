@@ -24,7 +24,7 @@ public class VisitorController {
     public VisitorController(VisitorService visitorService, 
                             FacilityService facilityService,
                             OfficerService officerService,
-PurposeOfVisitService purposeOfVisitService) {
+                            PurposeOfVisitService purposeOfVisitService) {
         this.visitorService = visitorService;
         this.facilityService = facilityService;
         this.officerService = officerService;
@@ -37,7 +37,8 @@ PurposeOfVisitService purposeOfVisitService) {
         model.addAttribute("facilities", facilityService.findAll());
         return "visitor/registration";
     }
-@PostMapping("/register")
+    
+    @PostMapping("/register")
     public String registerVisitor(@ModelAttribute Visitor visitor, RedirectAttributes redirectAttributes) {
         Visitor registeredVisitor = visitorService.registerVisitor(visitor);
         return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();

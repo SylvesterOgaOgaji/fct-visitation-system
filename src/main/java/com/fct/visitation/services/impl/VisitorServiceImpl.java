@@ -4,13 +4,20 @@ import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.repositories.VisitorRepository;
 import com.fct.visitation.services.interfaces.VisitorService;
 import com.fct.visitation.utils.QRCodeGeneratorInterface;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
 
 @Service
 public class VisitorServiceImpl implements VisitorService {
@@ -23,11 +30,16 @@ public class VisitorServiceImpl implements VisitorService {
         this.visitorRepository = visitorRepository;
         this.qrCodeGenerator = qrCodeGenerator;
     }
-
-    @Override
+ @Override
     public Visitor registerVisitor(Visitor visitor) {
-        String qrCode = generateQrCode(visitor);
-        visitor.setQrCode(qrCode);
+        // Generate unique QR code content
+        String qrCodeContent = generateQrCode(visitor);
+        visitor.setQrCode(qrCodeContent);
+        
+        // Generate and store QR code data as Base64
+        String qrCodeData = generateBase64QRCode(qrCodeContent);
+        visitor.setQrCodeData(qrCodeData);
+        
         return visitorRepository.save(visitor);
     }
 
@@ -53,7 +65,7 @@ public class VisitorServiceImpl implements VisitorService {
             .collect(Collectors.toList());
     }
 
-    @Override
+@Override
     public Visitor checkInVisitor(Long visitorId) {
         Visitor visitor = findById(visitorId)
             .orElseThrow(() -> new RuntimeException("Visitor not found"));
@@ -71,12 +83,47 @@ public class VisitorServiceImpl implements VisitorService {
 
     @Override
     public String generateQrCode(Visitor visitor) {
-        String qrCodeData = UUID.randomUUID().toString();
-        return qrCodeGenerator.generateQRCodeImage(qrCodeData, 200, 200);
+        // Generate a unique identifier for the QR code
+        return UUID.randomUUID().toString();
     }
 
     @Override
     public void deleteVisitor(Long visitorId) {
+        // Check if visitor exists before deleting
+        visitorRepository.findById(visitorId)
+            .orElseThrow(() -> new RuntimeException("Visitor not found with id: " + visitorId));
+        
+        // Delete the visitor
         visitorRepository.deleteById(visitorId);
+    }
+// Generate Base64 encoded QR code image
+    private String generateBase64QRCode(String content) {
+        try {
+            // Create QR code writer
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            
+            // Generate QR code matrix
+            com.google.zxing.common.BitMatrix bitMatrix = qrCodeWriter.encode(
+                content, 
+                BarcodeFormat.QR_CODE, 
+                200,  // width
+                200   // height
+            );
+            
+            // Convert to BufferedImage
+            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            
+            // Convert image to byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(qrImage, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+            
+ // Encode to Base64
+            return Base64.getEncoder().encodeToString(imageBytes);
+        } catch (Exception e) {
+            // Log error (consider using a logging framework)
+            System.err.println("Error generating QR code: " + e.getMessage());
+            return "";
+        }
     }
 }
