@@ -98,12 +98,22 @@
                                 <div class="invalid-feedback">Please select a purpose</div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="appointmentDateTime" class="form-label">Appointment Date & Time</label>
-                                <input type="datetime-local" class="form-control" id="appointmentDateTime" th:field="*{appointmentDateTime}" required>
-                                <div class="invalid-feedback">Please select a valid date and time</div>
-                                <small class="text-muted">Format: Month/Day/Year, Hour:Minute AM/PM</small>
+                            <!-- Replace the datetime-local input with separate date and time inputs -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="appointmentDate" class="form-label">Appointment Date</label>
+                                    <input type="date" class="form-control" id="appointmentDate" required>
+                                    <div class="invalid-feedback">Please select a valid date</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="appointmentTime" class="form-label">Appointment Time</label>
+                                    <input type="time" class="form-control" id="appointmentTime" required>
+                                    <div class="invalid-feedback">Please select a valid time</div>
+                                </div>
                             </div>
+                            
+                            <!-- Hidden field to store the combined datetime -->
+                            <input type="hidden" id="appointmentDateTime" th:field="*{appointmentDateTime}" />
                             
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-primary">Register</button>

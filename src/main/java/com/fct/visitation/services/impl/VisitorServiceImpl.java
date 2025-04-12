@@ -4,6 +4,7 @@ import com.fct.visitation.exceptions.DuplicateNinException;
 import com.fct.visitation.exceptions.WeeklyVisitLimitException;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.repositories.VisitorRepository;
+import com.fct.visitation.services.interfaces.EmailService;
 import com.fct.visitation.services.interfaces.NinVerificationService;
 import com.fct.visitation.services.interfaces.VisitorService;
 import com.fct.visitation.utils.QRCodeGeneratorInterface;
@@ -31,14 +32,17 @@ public class VisitorServiceImpl implements VisitorService {
     private final VisitorRepository visitorRepository;
     private final QRCodeGeneratorInterface qrCodeGenerator;
     private final NinVerificationService ninVerificationService;
+    private final EmailService emailService;
 
     @Autowired
     public VisitorServiceImpl(VisitorRepository visitorRepository, 
                              QRCodeGeneratorInterface qrCodeGenerator,
-                             NinVerificationService ninVerificationService) {
+                             NinVerificationService ninVerificationService,
+                             EmailService emailService) {
         this.visitorRepository = visitorRepository;
         this.qrCodeGenerator = qrCodeGenerator;
         this.ninVerificationService = ninVerificationService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -80,7 +84,18 @@ public class VisitorServiceImpl implements VisitorService {
             String qrCodeData = generateBase64QRCode(qrCodeContent);
             visitor.setQrCodeData(qrCodeData);
             
-            return visitorRepository.save(visitor);
+            // Save the visitor
+            Visitor savedVisitor = visitorRepository.save(visitor);
+            
+            // Send confirmation email automatically
+            try {
+                emailService.sendVisitorPass(savedVisitor, savedVisitor.getEmail());
+            } catch (Exception e) {
+                // Log error but continue - we don't want to fail the registration if email fails
+                System.err.println("Failed to send confirmation email: " + e.getMessage());
+            }
+            
+            return savedVisitor;
         } catch (DataIntegrityViolationException e) {
             // Handle any other database constraint violations
             if (e.getMessage().contains("visitors.UKf9bjevs0p1csgl1xuo2vajxtw")) {

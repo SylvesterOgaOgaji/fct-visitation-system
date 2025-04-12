@@ -18,59 +18,57 @@
         })
 })()
 
-// Dynamic loading of officers based on facility selection
+// Date formatting and dynamic loading
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded");
     
-    // Find the select elements by their ID
+    // Find the elements
     const facilitySelect = document.getElementById('facility');
     const officerSelect = document.getElementById('officer');
     const purposeSelect = document.getElementById('purposeOfVisit');
-    const dateTimeInput = document.getElementById('appointmentDateTime');
+    const dateInput = document.getElementById('appointmentDate');
+    const timeInput = document.getElementById('appointmentTime');
+    const datetimeInput = document.getElementById('appointmentDateTime');
     
-    // Configure date/time field for custom format
-    if (dateTimeInput) {
-        // Add event listener to reformat date on change
-        dateTimeInput.addEventListener('change', function(e) {
-            const dateValue = e.target.value; // This is in ISO format: YYYY-MM-DDTHH:MM
-            if (dateValue) {
-                // Create a date object from the ISO string
-                const date = new Date(dateValue);
-                
-                // Format the date as M/D/YY, h:MM AM/PM
-                const formattedMonth = (date.getMonth() + 1);
-                const formattedDay = date.getDate();
-                const formattedYear = date.getFullYear().toString().substr(-2);
-                const hours = date.getHours();
-                const minutes = date.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-                
-                const formattedDate = `${formattedMonth}/${formattedDay}/${formattedYear}, ${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-                
-                // Store the formatted date in a hidden field
-                const hiddenField = document.getElementById('formattedDateTime');
-                if (!hiddenField) {
-                    const hidden = document.createElement('input');
-                    hidden.type = 'hidden';
-                    hidden.id = 'formattedDateTime';
-                    hidden.name = 'formattedAppointmentDateTime';
-                    hidden.value = formattedDate;
-                    dateTimeInput.parentNode.appendChild(hidden);
-                } else {
-                    hiddenField.value = formattedDate;
-                }
-                
-                console.log('Formatted date:', formattedDate);
-            }
-        });
+    // Function to update the hidden datetime field
+    function updateDateTime() {
+        if (dateInput.value && timeInput.value) {
+            const date = new Date(dateInput.value + 'T' + timeInput.value);
+            
+            // Format as M/d/yy, h:mm AM/PM
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const year = date.getFullYear().toString().slice(-2);
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12;
+            
+            const formattedDate = `${month}/${day}/${year}, ${hour12}:${minutes} ${ampm}`;
+            datetimeInput.value = formattedDate;
+            console.log('Formatted date set to:', formattedDate);
+        }
+    }
+    
+    // Update datetime on change
+    if (dateInput && timeInput && datetimeInput) {
+        dateInput.addEventListener('change', updateDateTime);
+        timeInput.addEventListener('change', updateDateTime);
+        
+        // Initialize form with current datetime
+        const now = new Date();
+        dateInput.value = now.toISOString().split('T')[0];
+        timeInput.value = now.toTimeString().slice(0, 5);
+        updateDateTime();
     }
     
     console.log('Selected elements:');
     console.log('- Facility select:', facilitySelect);
     console.log('- Officer select:', officerSelect);
     console.log('- Purpose select:', purposeSelect);
-    console.log('- DateTime input:', dateTimeInput);
+    console.log('- Date input:', dateInput);
+    console.log('- Time input:', timeInput);
+    console.log('- DateTime hidden field:', datetimeInput);
     
     if (facilitySelect && officerSelect && purposeSelect) {
         console.log('All select elements found, adding change listener');

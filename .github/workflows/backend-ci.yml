@@ -33,6 +33,14 @@ jobs:
     - name: Verify Build Output
       run: ls -la target/
       
+    - name: Debug Missing Artifacts
+      # Added this step to debug if the JAR file is missing
+      run: |
+        if [ -z "$(ls -A target/*.jar 2>/dev/null)" ]; then
+          echo "Error: No JAR file found in target directory!"
+          exit 1
+        fi
+      
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:

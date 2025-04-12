@@ -14,6 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 @Controller
 @RequestMapping("/visitor")
 public class VisitorController {
@@ -21,7 +25,8 @@ public class VisitorController {
     private final FacilityService facilityService;
     private final OfficerService officerService;
     private final PurposeOfVisitService purposeOfVisitService;
-@Autowired
+
+    @Autowired
     public VisitorController(VisitorService visitorService, 
                             FacilityService facilityService,
                             OfficerService officerService,
@@ -38,9 +43,27 @@ public class VisitorController {
         model.addAttribute("facilities", facilityService.findAll());
         return "visitor/registration";
     }
-@PostMapping("/register")
+
+    @PostMapping("/register")
     public String registerVisitor(@ModelAttribute Visitor visitor, Model model, RedirectAttributes redirectAttributes) {
         try {
+            // Parse the appointmentDateTime if it's in the custom format
+            if (visitor.getAppointmentDateTime() != null) {
+                String dateTimeStr = visitor.getAppointmentDateTime().toString();
+                
+                // Check if it's in our custom format M/d/yy, h:mm a
+                if (dateTimeStr.matches("\\d{1,2}/\\d{1,2}/\\d{2},\\s+\\d{1,2}:\\d{2}\\s+[AP]M")) {
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy, h:mm a");
+                        LocalDateTime parsedDateTime = LocalDateTime.parse(dateTimeStr, formatter);
+                        visitor.setAppointmentDateTime(parsedDateTime);
+                    } catch (DateTimeParseException e) {
+                        // If parsing fails, just use the value as is
+                        System.out.println("Date parsing failed: " + e.getMessage());
+                    }
+                }
+            }
+            
             Visitor registeredVisitor = visitorService.registerVisitor(visitor);
             return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();
         } catch (WeeklyVisitLimitException e) {
@@ -50,7 +73,7 @@ public class VisitorController {
         } catch (NinVerificationException e) {
             model.addAttribute("errorMessage", e.getMessage());
         } catch (RuntimeException e) {
-            model.addAttribute("errorMessage", "An error occurred while registering the visitor. Please try again.");
+            model.addAttribute("errorMessage", "An error occurred while registering the visitor. Please try again. Error: " + e.getMessage());
         }
         
         // Re-populate the form with necessary data
@@ -62,7 +85,8 @@ public class VisitorController {
             model.addAttribute("officers", officerService.findByFacilityId(visitor.getFacility().getFacilityId()));
             model.addAttribute("purposes", purposeOfVisitService.findByFacilityId(visitor.getFacility().getFacilityId()));
         }
-// Return to the registration form
+        
+        // Return to the registration form
         return "visitor/registration";
     }
     
