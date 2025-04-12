@@ -30,11 +30,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B clean package -DskipTests
       
-    - name: Run Tests
-      #run: mvn -B test
+    - name: Verify Build Output
       run: ls -la target/
       
-    - name: Upload build artifact
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: fct-visitation-system-jar
