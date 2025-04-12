@@ -1,5 +1,7 @@
 package com.fct.visitation.controllers;
 
+import com.fct.visitation.exceptions.DuplicateNinException;
+import com.fct.visitation.exceptions.NinVerificationException;
 import com.fct.visitation.exceptions.WeeklyVisitLimitException;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.services.interfaces.FacilityService;
@@ -15,13 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/visitor")
 public class VisitorController {
-
     private final VisitorService visitorService;
     private final FacilityService facilityService;
     private final OfficerService officerService;
     private final PurposeOfVisitService purposeOfVisitService;
-    
-    @Autowired
+@Autowired
     public VisitorController(VisitorService visitorService, 
                             FacilityService facilityService,
                             OfficerService officerService,
@@ -38,29 +38,32 @@ public class VisitorController {
         model.addAttribute("facilities", facilityService.findAll());
         return "visitor/registration";
     }
-    
-    @PostMapping("/register")
+@PostMapping("/register")
     public String registerVisitor(@ModelAttribute Visitor visitor, Model model, RedirectAttributes redirectAttributes) {
         try {
             Visitor registeredVisitor = visitorService.registerVisitor(visitor);
             return "redirect:/visitor/confirmation?id=" + registeredVisitor.getVisitorId();
         } catch (WeeklyVisitLimitException e) {
-            // Add error message to the model
             model.addAttribute("errorMessage", e.getMessage());
-            
-            // Re-populate the form with necessary data
-            model.addAttribute("visitor", visitor);
-            model.addAttribute("facilities", facilityService.findAll());
-            
-            // If facility is selected, load related officers and purposes
-            if (visitor.getFacility() != null && visitor.getFacility().getFacilityId() != null) {
-                model.addAttribute("officers", officerService.findByFacilityId(visitor.getFacility().getFacilityId()));
-                model.addAttribute("purposes", purposeOfVisitService.findByFacilityId(visitor.getFacility().getFacilityId()));
-            }
-            
-            // Return to the registration form
-            return "visitor/registration";
+        } catch (DuplicateNinException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        } catch (NinVerificationException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", "An error occurred while registering the visitor. Please try again.");
         }
+        
+        // Re-populate the form with necessary data
+        model.addAttribute("visitor", visitor);
+        model.addAttribute("facilities", facilityService.findAll());
+        
+        // If facility is selected, load related officers and purposes
+        if (visitor.getFacility() != null && visitor.getFacility().getFacilityId() != null) {
+            model.addAttribute("officers", officerService.findByFacilityId(visitor.getFacility().getFacilityId()));
+            model.addAttribute("purposes", purposeOfVisitService.findByFacilityId(visitor.getFacility().getFacilityId()));
+        }
+// Return to the registration form
+        return "visitor/registration";
     }
     
     @GetMapping("/confirmation")

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -54,6 +55,7 @@ public class Visitor {
     private PurposeOfVisit purposeOfVisit;
     
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "M/d/yy, h:mm a")
     private LocalDateTime appointmentDateTime;
     
     @Enumerated(EnumType.STRING)
@@ -63,7 +65,6 @@ public class Visitor {
     @Column(unique = true)
     private String qrCode;
     
-    // Add this new field to resolve the database error
     @Column(name = "qr_code_data", columnDefinition = "TEXT", nullable = true)
     private String qrCodeData;
     
@@ -115,7 +116,6 @@ public class Visitor {
     public String getQrCode() { return this.qrCode; }
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }
     
-    // Add getter and setter for qrCodeData
     public String getQrCodeData() { return this.qrCodeData; }
     public void setQrCodeData(String qrCodeData) { this.qrCodeData = qrCodeData; }
     

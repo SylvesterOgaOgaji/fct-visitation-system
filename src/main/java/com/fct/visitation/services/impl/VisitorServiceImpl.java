@@ -1,14 +1,17 @@
 package com.fct.visitation.services.impl;
 
+import com.fct.visitation.exceptions.DuplicateNinException;
 import com.fct.visitation.exceptions.WeeklyVisitLimitException;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.repositories.VisitorRepository;
+import com.fct.visitation.services.interfaces.NinVerificationService;
 import com.fct.visitation.services.interfaces.VisitorService;
 import com.fct.visitation.utils.QRCodeGeneratorInterface;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
@@ -27,39 +30,64 @@ public class VisitorServiceImpl implements VisitorService {
 
     private final VisitorRepository visitorRepository;
     private final QRCodeGeneratorInterface qrCodeGenerator;
+    private final NinVerificationService ninVerificationService;
 
     @Autowired
-    public VisitorServiceImpl(VisitorRepository visitorRepository, QRCodeGeneratorInterface qrCodeGenerator) {
+    public VisitorServiceImpl(VisitorRepository visitorRepository, 
+                             QRCodeGeneratorInterface qrCodeGenerator,
+                             NinVerificationService ninVerificationService) {
         this.visitorRepository = visitorRepository;
         this.qrCodeGenerator = qrCodeGenerator;
+        this.ninVerificationService = ninVerificationService;
     }
+
     @Override
     public Visitor registerVisitor(Visitor visitor) {
-        // Check if a visitor with the same email already exists
-        Optional<Visitor> existingVisitorOpt = visitorRepository.findByEmail(visitor.getEmail());
-        
-        if (existingVisitorOpt.isPresent()) {
-            Visitor existingVisitor = existingVisitorOpt.get();
+        try {
+            // Check if a visitor with the same email already exists
+            Optional<Visitor> existingVisitorOpt = visitorRepository.findByEmail(visitor.getEmail());
             
-            // Calculate the date one week ago
-            LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
-            
-            // Check if the existing visitor's appointment was less than a week ago
-            if (existingVisitor.getAppointmentDateTime().isAfter(oneWeekAgo)) {
-                throw new WeeklyVisitLimitException("You can only register for a visit once per week. Your last appointment was on " 
-                    + existingVisitor.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+            if (existingVisitorOpt.isPresent()) {
+                Visitor existingVisitor = existingVisitorOpt.get();
+                
+                // Calculate the date one week ago
+                LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+                
+                // Check if the existing visitor's appointment was less than a week ago
+                if (existingVisitor.getAppointmentDateTime().isAfter(oneWeekAgo)) {
+                    throw new WeeklyVisitLimitException("You can only register for a visit once per week. Your last appointment was on " 
+                        + existingVisitor.getAppointmentDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                }
+                // If it's been more than a week, allow the new registration
             }
-            // If it's been more than a week, allow the new registration
+            
+            // Check for duplicate NIN
+            Optional<Visitor> existingNinVisitor = visitorRepository.findByNin(visitor.getNin());
+            if (existingNinVisitor.isPresent()) {
+                throw new DuplicateNinException("A visitor with this National Identification Number already exists. Please use a different NIN.");
+            }
+            
+            // Verify NIN with NIMC
+            boolean ninVerified = ninVerificationService.verifyNin(visitor.getNin(), visitor.getFirstName(), visitor.getLastName());
+            if (!ninVerified) {
+                throw new RuntimeException("NIN verification failed. Please check your NIN and ensure your name matches what is on your national ID.");
+            }
+
+            // Continue with registration
+            String qrCodeContent = generateQrCode(visitor);
+            visitor.setQrCode(qrCodeContent);
+            
+            String qrCodeData = generateBase64QRCode(qrCodeContent);
+            visitor.setQrCodeData(qrCodeData);
+            
+            return visitorRepository.save(visitor);
+        } catch (DataIntegrityViolationException e) {
+            // Handle any other database constraint violations
+            if (e.getMessage().contains("visitors.UKf9bjevs0p1csgl1xuo2vajxtw")) {
+                throw new DuplicateNinException("A visitor with this National Identification Number already exists. Please use a different NIN.");
+            }
+            throw e;
         }
-        
-        // Continue with registration
-        String qrCodeContent = generateQrCode(visitor);
-        visitor.setQrCode(qrCodeContent);
-        
-        String qrCodeData = generateBase64QRCode(qrCodeContent);
-        visitor.setQrCodeData(qrCodeData);
-        
-        return visitorRepository.save(visitor);
     }
 
     @Override
@@ -84,7 +112,7 @@ public class VisitorServiceImpl implements VisitorService {
             .collect(Collectors.toList());
     }
 
-@Override
+    @Override
     public Visitor checkInVisitor(Long visitorId) {
         Visitor visitor = findById(visitorId)
             .orElseThrow(() -> new RuntimeException("Visitor not found"));
@@ -115,7 +143,8 @@ public class VisitorServiceImpl implements VisitorService {
         // Delete the visitor
         visitorRepository.deleteById(visitorId);
     }
-// Generate Base64 encoded QR code image
+
+    // Generate Base64 encoded QR code image
     private String generateBase64QRCode(String content) {
         try {
             // Create QR code writer
@@ -137,7 +166,7 @@ public class VisitorServiceImpl implements VisitorService {
             ImageIO.write(qrImage, "png", baos);
             byte[] imageBytes = baos.toByteArray();
             
- // Encode to Base64
+            // Encode to Base64
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             // Log error (consider using a logging framework)

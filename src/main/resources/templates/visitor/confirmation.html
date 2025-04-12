@@ -4,39 +4,50 @@
     <meta charset="UTF-8">
     <title>Visitor Registration Confirmation</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/fct-visitation/">FCT Visitation System</a>
+        </div>
+    </nav>
+
     <div class="container mt-5">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h3>Registration Successful!</h3>
-            </div>
-            <div class="card-body">
-                <h5>Thank you for registering, <span th:text="${visitor.firstName} + ' ' + ${visitor.lastName}">Visitor Name</span>!</h5>
-                <p>Your visitor details have been recorded successfully.</p>
-                
-                <div class="mt-4">
-                    <h5>Your QR Code:</h5>
-                    <img th:if="${visitor.qrCodeData}" th:src="'data:image/png;base64,' + ${visitor.qrCodeData}" alt="QR Code" class="img-fluid" style="max-width: 200px;"/>
-                </div>
-                
-                <div class="mt-4">
-                    <h5>Appointment Details:</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item"><strong>Appointment Date/Time:</strong> <span th:text="${#temporals.format(visitor.appointmentDateTime, 'dd-MM-yyyy HH:mm')}">Date</span></li>
-                        <li class="list-group-item"><strong>Facility:</strong> <span th:text="${visitor.facility.facilityName}">Facility</span></li>
-                        <li class="list-group-item"><strong>Officer:</strong> <span th:text="${visitor.officer.name}">Officer</span></li>
-                        <li class="list-group-item"><strong>Purpose of Visit:</strong> <span th:text="${visitor.purposeOfVisit.description}">Purpose</span></li>
-                    </ul>
-                </div>
-                
-                <div class="mt-4">
-                    <p>Please save your QR code or take a screenshot. You'll need to present this when you arrive for your appointment.</p>
-                </div>
-                
-                <div class="mt-4">
-                    <a href="/fct-visitation/visitor/register" class="btn btn-primary">Register Another Visitor</a>
-                    <a href="/fct-visitation" class="btn btn-secondary">Home</a>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3>Registration Successful!</h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>Thank you for registering, <span th:text="${visitor.firstName} + ' ' + ${visitor.lastName}">Visitor Name</span>!</h5>
+                        <p>Your visitor details have been recorded successfully.</p>
+                        
+                        <div class="mt-4 qr-container">
+                            <h5>Your QR Code:</h5>
+                            <img th:if="${visitor.qrCodeData}" th:src="'data:image/png;base64,' + ${visitor.qrCodeData}" alt="QR Code" class="img-fluid qr-code" style="max-width: 200px;"/>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Appointment Details:</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>Appointment Date/Time:</strong> <span th:text="${#temporals.format(visitor.appointmentDateTime, 'M/d/yy, h:mm a')}">Date</span></li>
+                                <li class="list-group-item"><strong>Facility:</strong> <span th:text="${visitor.facility.facilityName}">Facility</span></li>
+                                <li class="list-group-item"><strong>Officer:</strong> <span th:text="${visitor.officer.name}">Officer</span></li>
+                                <li class="list-group-item"><strong>Purpose of Visit:</strong> <span th:text="${visitor.purposeOfVisit.description}">Purpose</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-info mt-4">
+                            <p>Please save your QR code or take a screenshot. You'll need to present this when you arrive for your appointment.</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="/fct-visitation/visitor/register" class="btn btn-primary">Register Another Visitor</a>
+                            <a href="/fct-visitation" class="btn btn-secondary">Home</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
