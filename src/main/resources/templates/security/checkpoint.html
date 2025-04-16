@@ -1,0 +1,932 @@
+<div class="fw-bold">Appointment Time</div>
+                                                <div id="visitor-appointment"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Officer to Meet</div>
+                                                <div id="visitor-officer"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Facility</div>
+                                                <div id="visitor-facility"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="vehicle-info-section" class="border rounded p-3 mb-3 d-none">
+                                        <h6 class="mb-3"><i class="fas fa-car me-2"></i> Vehicle Information</h6>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="fw-bold">Vehicle Type</div>
+                                                <div id="vehicle-type"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Registration</div>
+                                                <div id="vehicle-reg"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Model</div>
+                                                <div id="vehicle-model"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Color</div>
+                                                <div id="vehicle-color"></div>
+                                            </div>
+                                        </div>
+                                        <div id="driver-info" class="mt-2 d-none">
+                                            <h6 class="mb-2">Driver Information</h6>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <div class="fw-bold">Name</div>
+                                                    <div id="driver-name"></div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fw-bold">Verification Status</div>
+                                                    <div id="driver-verification"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="action-required-alert" class="alert alert-warning mb-3 d-none">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <span id="action-message"></span>
+                                    </div>
+                                    
+                                    <div class="scan-actions text-center">
+                                        <div id="error-actions" class="d-none">
+                                            <button class="btn btn-danger report-issue-btn">
+                                                <i class="fas fa-flag me-2"></i> Report Issue
+                                            </button>
+                                            <button class="btn btn-secondary scan-new-btn">
+                                                <i class="fas fa-redo me-2"></i> Scan New Code
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="success-actions" class="d-none">
+                                            <button class="btn btn-success approve-entry-btn">
+                                                <i class="fas fa-check-circle me-2"></i> Approve Entry
+                                            </button>
+                                            <button class="btn btn-warning verify-further-btn">
+                                                <i class="fas fa-search me-2"></i> Additional Verification
+                                            </button>
+                                            <button class="btn btn-danger deny-entry-btn">
+                                                <i class="fas fa-times-circle me-2"></i> Deny Entry
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="completed-actions" class="d-none">
+                                            <button class="btn btn-primary scan-new-btn">
+                                                <i class="fas fa-qrcode me-2"></i> Scan New Code
+                                            </button>
+                                            <button class="btn btn-secondary view-visitor-details-btn">
+                                                <i class="fas fa-user me-2"></i> View Full Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Checkpoint Stats -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i> Today's Stats</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 text-center">
+                                            <h2 class="mb-0" th:text="${stats != null ? stats.totalVisits : 0}">24</h2>
+                                            <div>Total Visits</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 text-center">
+                                            <h2 class="mb-0" th:text="${stats != null ? stats.checkedIn : 0}">18</h2>
+                                            <div>Checked In</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 text-center">
+                                            <h2 class="mb-0" th:text="${stats != null ? stats.pending : 0}">6</h2>
+                                            <div>Pending</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded p-3 text-center">
+                                            <h2 class="mb-0" th:text="${stats != null ? stats.deniedEntry : 0}">2</h2>
+                                            <div>Denied Entry</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-bolt me-2"></i> Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <a href="#" class="btn btn-outline-danger btn-sm w-100" data-bs-toggle="modal" data-bs-target="#securityAlertModal">
+                                            <i class="fas fa-exclamation-triangle me-2"></i> Create Alert
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/vehicle/verify}" class="btn btn-outline-success btn-sm w-100">
+                                            <i class="fas fa-car me-2"></i> Verify Vehicle
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/parking/allocate}" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="fas fa-parking me-2"></i> Parking Allocation
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/security/visitors}" class="btn btn-outline-info btn-sm w-100">
+                                            <i class="fas fa-users me-2"></i> Today's Visitors
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Manual Entry Modal -->
+    <div class="modal fade" id="manualEntryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-keyboard me-2"></i> Manual Entry</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="manualEntryForm">
+                        <div class="mb-3">
+                            <label for="visitorId" class="form-label">Visitor ID / Confirmation Number</label>
+                            <input type="text" class="form-control" id="visitorId" placeholder="Enter visitor ID or confirmation number" required>
+                            <div class="form-text">Enter the visitor ID or confirmation number printed on the visitor's document.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="manualCheckpointSelect" class="form-label">Checkpoint</label>
+                            <select class="form-select" id="manualCheckpointSelect" required>
+                                <option value="">-- Select Checkpoint --</option>
+                                <option th:each="checkpoint : ${checkpoints}" 
+                                        th:value="${checkpoint.id}"
+                                        th:text="${checkpoint.name + ' (' + checkpoint.checkpointType + ')'}">
+                                    Main Entrance (ENTRY)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="checkInReason" class="form-label">Reason for Manual Entry</label>
+                            <select class="form-select" id="checkInReason" required>
+                                <option value="">-- Select Reason --</option>
+                                <option value="QR Code Damaged">QR Code Damaged</option>
+                                <option value="QR Code Not Available">QR Code Not Available</option>
+                                <option value="Scanner Malfunction">Scanner Malfunction</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 d-none" id="otherReasonGroup">
+                            <label for="otherReason" class="form-label">Specify Other Reason</label>
+                            <textarea class="form-control" id="otherReason" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitManualEntry">
+                        <i class="fas fa-paper-plane me-2"></i> Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Security Alert Modal -->
+    <div class="modal fade" id="securityAlertModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Create Security Alert</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="securityAlertForm">
+                        <div class="mb-3">
+                            <label for="alertTitle" class="form-label">Alert Title</label>
+                            <input type="text" class="form-control" id="alertTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alertDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="alertDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alertLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="alertLocation" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alertSeverity" class="form-label">Severity</label>
+                            <select class="form-select" id="alertSeverity" required>
+                                <option value="LOW">Low - Information Only</option>
+                                <option value="MEDIUM">Medium - Attention Required</option>
+                                <option value="HIGH">High - Immediate Action Required</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="responseTeamId" class="form-label">Assign Response Team</label>
+                            <select class="form-select" id="responseTeamId">
+                                <option value="">-- Optional: Assign Team --</option>
+                                <option th:each="team : ${responseTeams}" 
+                                        th:value="${team.id}"
+                                        th:text="${team.name}">
+                                    Alpha Response Team
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="submitSecurityAlert">
+                        <i class="fas fa-bell me-2"></i> Create Alert
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    
+    <!-- HTML5 QR Code Scanner Script -->
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Initialize QR scanner
+            const html5QrCode = new Html5Qrcode("qr-reader");
+            const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+            let currentCamera = 'environment';
+            
+            // Enable the start scanner button when a checkpoint is selected
+            $('#checkpointSelect').change(function() {
+                if ($(this).val()) {
+                    $('#start-scanner-btn').prop('disabled', false);
+                    $('#scanner-status').text("Scanner ready. Click 'Start Scanner' to begin.");
+                } else {
+                    $('#start-scanner-btn').prop('disabled', true);
+                    $('#scanner-status').text("Scanner ready. Waiting for checkpoint selection...");
+                }
+            });
+            
+            // Start scanner button
+            $('#start-scanner-btn').click(function() {
+                html5QrCode.start({ facingMode: currentCamera }, qrConfig, onScanSuccess, onScanFailure)
+                    .then(() => {
+                        $('#start-scanner-btn').addClass('d-none');
+                        $('#stop-scanner-btn').removeClass('d-none');
+                        $('#scanner-status').text("Scanner active. Position QR code within the frame.");
+                    })
+                    .catch(err => {
+                        $('#scanner-status').text("Error starting scanner: " + err);
+                        console.error("Error starting QR scanner:", err);
+                    });
+            });
+            
+            // Stop scanner button
+            $('#stop-scanner-btn').click(function() {
+                stopScanner();
+            });
+            
+            // Toggle camera button
+            $('#toggle-camera-btn').click(function() {
+                if (html5QrCode.isScanning) {
+                    html5QrCode.stop().then(() => {
+                        currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+                        html5QrCode.start({ facingMode: currentCamera }, qrConfig, onScanSuccess, onScanFailure)
+                            .catch(err => {
+                                $('#scanner-status').text("Error switching camera: " + err);
+                                console.error("Error switching camera:", err);
+                            });
+                    });
+                } else {
+                    currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+                    $('#scanner-status').text("Camera switched. Click 'Start Scanner' to begin.");
+                }
+            });
+            
+            // Handle other reason in manual entry
+            $('#checkInReason').change(function() {
+                if ($(this).val() === "Other") {
+                    $('#otherReasonGroup').removeClass('d-none');
+                    $('#otherReason').attr('required', true);
+                } else {
+                    $('#otherReasonGroup').addClass('d-none');
+                    $('#otherReason').attr('required', false);
+                }
+            });
+            
+            // Submit manual entry
+            $('#submitManualEntry').click(function() {
+                const form = $('#manualEntryForm');
+                
+                if (!$('#visitorId').val() || !$('#manualCheckpointSelect').val() || !$('#checkInReason').val()) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+                
+                if ($('#checkInReason').val() === "Other" && !$('#otherReason').val().trim()) {
+                    alert("Please specify the reason for manual entry.");
+                    return;
+                }
+                
+                // Format visitor ID - remove any "VS-" prefix if present
+                let visitorId = $('#visitorId').val().trim();
+                if (visitorId.toUpperCase().startsWith('VS-')) {
+                    visitorId = visitorId.substring(3);
+                }
+                
+                // Process the manual scan
+                processQrCode(visitorId, $('#manualCheckpointSelect').val());
+                
+                // Close the modal
+                $('#manualEntryModal').modal('hide');
+            });
+            
+            // Submit security alert
+            $('#submitSecurityAlert').click(function() {
+                const form = $('#securityAlertForm');
+                
+                if (!$('#alertTitle').val() || !$('#alertDescription').val() || !$('#alertLocation').val() || !$('#alertSeverity').val()) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+                
+                // Create alert data
+                const alertData = {
+                    title: $('#alertTitle').val(),
+                    description: $('#alertDescription').val(),
+                    location: $('#alertLocation').val(),
+                    severity: $('#alertSeverity').val(),
+                    responseTeamId: $('#responseTeamId').val() || null
+                };
+                
+                // Send alert to server
+                $.ajax({
+                    url: '/security/alerts',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(alertData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Security alert created successfully!");
+                            $('#securityAlertModal').modal('hide');
+                            // Reset form
+                            $('#securityAlertForm')[0].reset();
+                        } else {
+                            alert("Error creating alert: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error creating alert: " + error);
+                        console.error("Error creating security alert:", xhr, status, error);
+                    }
+                });
+            });
+            
+            // QR code scanning success handler
+            function onScanSuccess(decodedText) {
+                // Stop the scanner
+                stopScanner();
+                
+                // Play success sound
+                playSound('success');
+                
+                // Extract visitor ID from QR code
+                let visitorId;
+                
+                if (decodedText.includes("/visitor/")) {
+                    // Extract visitor ID from URL-style QR code
+                    const urlParts = decodedText.split("/");
+                    visitorId = urlParts[urlParts.length - 1];
+                } else if (decodedText.includes("?id=")) {
+                    // Extract visitor ID from query parameter style QR code
+                    visitorId = decodedText.split("?id=")[1];
+                } else {
+                    // Assume the QR code contains just the visitor ID
+                    visitorId = decodedText;
+                }
+                
+                // Process the QR code with the selected checkpoint
+                processQrCode(visitorId, $('#checkpointSelect').val());
+            }
+            
+            // QR code scanning failure handler
+            function onScanFailure(error) {
+                // Intentionally left blank to avoid console flooding
+                // We only care about successful scans
+            }
+            
+            // Stop the QR scanner
+            function stopScanner() {
+                if (html5QrCode.isScanning) {
+                    html5QrCode.stop()
+                        .then(() => {
+                            $('#stop-scanner-btn').addClass('d-none');
+                            $('#start-scanner-btn').removeClass('d-none');
+                            $('#scanner-status').text("Scanner stopped. Click 'Start Scanner' to resume.");
+                        })
+                        .catch(err => {
+                            console.error("Error stopping QR scanner:", err);
+                        });
+                }
+            }
+            
+            // Process QR code with checkpoint
+            function processQrCode(visitorId, checkpointId) {
+                // Show loading state in the result panel
+                showScanResultLoading();
+                
+                // Prepare request data
+                const scanData = {
+                    qrCode: visitorId,
+                    checkpointId: checkpointId
+                };
+                
+                // Send scan request to server
+                $.ajax({
+                    url: '/checkpoint/scan',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(scanData),
+                    success: function(response) {
+                        if (response.success) {
+                            displaySuccessfulScan(response);
+                            // Add to recent scans table
+                            addToRecentScans({
+                                time: new Date().toTimeString().split(' ')[0],
+                                visitorName: response.visitorName,
+                                status: response.visitorStatus,
+                                visitorId: visitorId
+                            });
+                        } else {
+                            displayFailedScan(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = "Error processing QR code";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        displayFailedScan(errorMessage);
+                        console.error("Error processing QR code:", xhr, status, error);
+                    }
+                });
+            }
+            
+            // Display successful scan result
+            function displaySuccessfulScan(data) {
+                // Hide loading, placeholder and show content
+                $('#scan-result-placeholder').addClass('d-none');
+                $('#scan-result-content').removeClass('d-none');
+                
+                // Set visitor details
+                $('#visitor-name').text(data.visitorName);
+                $('#visitor-purpose').text(data.visitorPurpose);
+                $('#visitor-appointment').text(new Date().toLocaleDateString());
+                $('#visitor-officer').text(data.officerToMeet);
+                $('#visitor-facility').text(data.destinationFacility);
+                
+                // Set status badge
+                const status = data.visitorStatus;
+                let statusClass = '';
+                switch (status) {
+                    case 'Checked-in':
+                        statusClass = 'bg-info';
+                        break;
+                    case 'In-Meeting':
+                        statusClass = 'bg-primary';
+                        break;
+                    case 'Completed':
+                        statusClass = 'bg-success';
+                        break;
+                    default:
+                        statusClass = 'bg-warning';
+                }
+                $('#result-status-badge').text(status).removeClass().addClass(statusClass + ' d-inline-block mb-2 px-4 py-2 rounded-pill fw-bold');
+                
+                // Handle vehicle information if available
+                if (data.hasVehicle) {
+                    $('#vehicle-info-section').removeClass('d-none');
+                    // We would need to make another API call to get vehicle details
+                    $.ajax({
+                        url: '/vehicle/visitor/' + data.visitorId,
+                        type: 'GET',
+                        success: function(vehicleData) {
+                            if (vehicleData && vehicleData.length > 0) {
+                                const vehicle = vehicleData[0];
+                                $('#vehicle-type').text(vehicle.carType);
+                                $('#vehicle-reg').text(vehicle.registrationNumber);
+                                $('#vehicle-model').text(vehicle.model);
+                                $('#vehicle-color').text(vehicle.color);
+                                
+                                // Show driver info for rented vehicles
+                                if (vehicle.carType === 'Rented' && vehicle.driver) {
+                                    $('#driver-info').removeClass('d-none');
+                                    $('#driver-name').text(vehicle.driver.name);
+                                    const verification = vehicle.driver.verificationStatus;
+                                    let verificationBadge = '';
+                                    if (verification === 'Verified') {
+                                        verificationBadge = '<span class="badge bg-success">Verified</span>';
+                                    } else if (verification === 'Rejected') {
+                                        verificationBadge = '<span class="badge bg-danger">Rejected</span>';
+                                    } else {
+                                        verificationBadge = '<span class="badge bg-warning">Pending</span>';
+                                    }
+                                    $('#driver-verification').html(verificationBadge);
+                                } else {
+                                    $('#driver-info').addClass('d-none');
+                                }
+                            }
+                        },
+                        error: function() {
+                            // Fallback if vehicle details cannot be fetched
+                            $('#vehicle-type').text('Vehicle information unavailable');
+                        }
+                    });
+                } else {
+                    $('#vehicle-info-section').addClass('d-none');
+                }
+                
+                // Show actions based on visitor status
+                $('#error-actions').addClass('d-none');
+                if (status === 'Completed') {
+                    $('#success-actions').addClass('d-none');
+                    $('#completed-actions').removeClass('d-none');
+                } else {
+                    $('#success-actions').removeClass('d-none');
+                    $('#completed-actions').addClass('d-none');
+                }
+                
+                // Show action required alert if needed
+                if (data.actionRequired) {
+                    $('#action-required-alert').removeClass('d-none');
+                    $('#action-message').text(data.actionMessage);
+                } else {
+                    $('#action-required-alert').addClass('d-none');
+                }
+            }
+            
+            // Display failed scan result
+            function displayFailedScan(errorMessage) {
+                // Hide loading, placeholder and show content
+                $('#scan-result-placeholder').addClass('d-none');
+                $('#scan-result-content').removeClass('d-none');
+                
+                // Set error status
+                $('#result-status-badge').text('Invalid QR Code').removeClass().addClass('bg-danger d-inline-block mb-2 px-4 py-2 rounded-pill fw-bold');
+                $('#visitor-name').text('Verification Failed');
+                
+                // Clear and hide visitor details
+                $('#visitor-purpose, #visitor-appointment, #visitor-officer, #visitor-facility').text('N/A');
+                $('#vehicle-info-section').addClass('d-none');
+                
+                // Show error message
+                $('#action-required-alert').removeClass('d-none');
+                $('#action-message').text(errorMessage);
+                
+                // Show error actions, hide other action buttons
+                $('#error-actions').removeClass('d-none');
+                $('#success-actions, #completed-actions').addClass('d-none');
+                
+                // Play error sound
+                playSound('error');
+            }
+            
+            // Show loading state in the scan result panel
+            function showScanResultLoading() {
+                $('#scan-result-placeholder').addClass('d-none');
+                $('#scan-result-content').addClass('d-none');
+                // You could add a loading spinner here
+            }
+            
+            // Add a scan to the recent scans table
+            function addToRecentScans(scan) {
+                const statusBadge = getStatusBadge(scan.status);
+                const newRow = `
+                    <tr>
+                        <td>${scan.time}</td>
+                        <td>${scan.visitorName}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary view-scan-btn" data-visitor-id="${scan.visitorId}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                // Remove "No recent scans" row if present
+                if ($('#recent-scans-table td.text-center').length) {
+                    $('#recent-scans-table').empty();
+                }
+                
+                // Add the new row at the top
+                $('#recent-scans-table').prepend(newRow);
+                
+                // Limit the number of rows to 10
+                if ($('#recent-scans-table tr').length > 10) {
+                    $('#recent-scans-table tr:last').remove();
+                }
+            }
+            
+            // Get status badge HTML based on status
+            function getStatusBadge(status) {
+                let badgeClass = '';
+                switch (status) {
+                    case 'Checked-in':
+                        badgeClass = 'bg-info';
+                        break;
+                    case 'In-Meeting':
+                        badgeClass = 'bg-primary';
+                        break;
+                    case 'Completed':
+                        badgeClass = 'bg-success';
+                        break;
+                    case 'Cancelled':
+                        badgeClass = 'bg-danger';
+                        break;
+                    default:
+                        badgeClass = 'bg-warning';
+                }
+                return `<span class="badge ${badgeClass}">${status}</span>`;
+            }
+            
+            // Function to play sound
+            function playSound(type) {
+                const audio = new Audio();
+                if (type === 'success') {
+                    audio.src = '/sounds/success-beep.mp3';
+                } else {
+                    audio.src = '/sounds/error-beep.mp3';
+                }
+                audio.play().catch(e => console.log('Sound playback failed:', e));
+            }
+            
+            // Handle view scan button clicks in recent scans
+            $(document).on('click', '.view-scan-btn', function() {
+                const visitorId = $(this).data('visitor-id');
+                processQrCode(visitorId, $('#checkpointSelect').val());
+            });
+            
+            // Reset scan button
+            $(document).on('click', '.scan-new-btn', function() {
+                $('#scan-result-content').addClass('d-none');
+                $('#scan-result-placeholder').removeClass('d-none');
+                $('#start-scanner-btn').click();
+            });
+            
+            // Approve entry button
+            $(document).on('click', '.approve-entry-btn', function() {
+                alert('Visitor entry approved!');
+                $('#success-actions').addClass('d-none');
+                $('#completed-actions').removeClass('d-none');
+                
+                // Update the status badge to Checked-in
+                $('#result-status-badge').text('Entry Approved').removeClass().addClass('bg-success d-inline-block mb-2 px-4 py-2 rounded-pill fw-bold');
+            });
+            
+            // Deny entry button
+            $(document).on('click', '.deny-entry-btn', function() {
+                const reason = prompt('Please enter the reason for denying entry:');
+                if (reason) {
+                    alert('Visitor entry denied. Reason: ' + reason);
+                    $('#success-actions').addClass('d-none');
+                    $('#completed-actions').removeClass('d-none');
+                    
+                    // Update the status badge to Denied
+                    $('#result-status-badge').text('Entry Denied').removeClass().addClass('bg-danger d-inline-block mb-2 px-4 py-2 rounded-pill fw-bold');
+                    
+                    // You would typically make an API call here to update the visitor status
+                }
+            });
+            
+            // Additional verification button
+            $(document).on('click', '.verify-further-btn', function() {
+                alert('Please verify visitor ID and other identification documents.');
+            });
+            
+            // Report issue button
+            $(document).on('click', '.report-issue-btn', function() {
+                $('#securityAlertModal').modal('show');
+                
+                // Pre-fill alert details with the issue
+                $('#alertTitle').val('QR Code Verification Issue');
+                $('#alertDescription').val('Issue with QR code verification at ' + $('#checkpointSelect option:selected').text());
+                $('#alertLocation').val($('#checkpointSelect option:selected').text());
+                $('#alertSeverity').val('MEDIUM');
+            });
+            
+            // View visitor details button
+            $(document).on('click', '.view-visitor-details-btn', function() {
+                // You would typically handle this by opening a visitor details page or modal
+                alert('This would open the full visitor details page.');
+            });
+        });
+    </script>
+    
+    <style>
+        /* Scanner Container */
+        .scanner-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        #qr-reader {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        #qr-reader video {
+            object-fit: cover;
+        }
+        
+        /* Scan Result Styling */
+        .scan-result-status {
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 15px;
+        }
+        
+        /* Recent Scans Table */
+        #recent-scans-table td {
+            vertical-align: middle;
+        }
+        
+        /* Make the security sidebar fixed height on large screens */
+        @media (min-width: 992px) {
+            .security-sidebar {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+            
+            main.flex-grow-1 {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</body>
+</html><!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/header :: head('Security QR Scanner')}">
+    <title>QR Scanner</title>
+</head>
+<body class="d-flex flex-column vh-100">
+    <!-- Header -->
+    <div th:replace="~{layout/header :: header}"></div>
+    
+    <div class="d-flex flex-grow-1">
+        <!-- Security Sidebar -->
+        <div th:replace="~{layout/sidebar :: securitySidebar}"></div>
+        
+        <main class="flex-grow-1 bg-light p-4">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-qrcode me-2"></i> QR Code Scanner</h2>
+                    <div>
+                        <span class="badge bg-primary" sec:authentication="name">Security Officer</span>
+                        <span class="badge bg-secondary" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy, HH:mm')}">12 Apr 2025, 10:30</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-camera me-2"></i> Scan Visitor QR Code</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i> Position the visitor's QR code within the scanner frame. 
+                                        The system will automatically verify the code and update the visitor's status.
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="checkpointSelect" class="form-label">Select Checkpoint</label>
+                                        <select class="form-select" id="checkpointSelect" required>
+                                            <option value="">-- Select Checkpoint --</option>
+                                            <option th:each="checkpoint : ${checkpoints}" 
+                                                    th:value="${checkpoint.id}"
+                                                    th:text="${checkpoint.name + ' (' + checkpoint.checkpointType + ')'}">
+                                                Main Entrance (ENTRY)
+                                            </option>
+                                        </select>
+                                        <div class="form-text">Select the checkpoint where you are currently stationed.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="scanner-container text-center">
+                                    <div id="qr-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                                    <div id="scanner-status" class="mt-2 text-muted">Scanner ready. Waiting for checkpoint selection...</div>
+                                </div>
+                                
+                                <div class="scanner-controls mt-4 text-center">
+                                    <button id="start-scanner-btn" class="btn btn-success" disabled>
+                                        <i class="fas fa-play me-2"></i> Start Scanner
+                                    </button>
+                                    <button id="stop-scanner-btn" class="btn btn-danger d-none">
+                                        <i class="fas fa-stop-circle me-2"></i> Stop Scanner
+                                    </button>
+                                    <button id="toggle-camera-btn" class="btn btn-outline-secondary">
+                                        <i class="fas fa-sync me-2"></i> Switch Camera
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#manualEntryModal">
+                                        <i class="fas fa-keyboard me-2"></i> Manual Entry
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Scans -->
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i> Recent Scans</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Visitor</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-scans-table">
+                                            <tr th:if="${recentScans != null && !recentScans.empty}" th:each="scan : ${recentScans}">
+                                                <td th:text="${#temporals.format(scan.scannedAt, 'HH:mm:ss')}">10:30:45</td>
+                                                <td th:text="${scan.visitor.firstName + ' ' + scan.visitor.lastName}">John Doe</td>
+                                                <td>
+                                                    <span th:class="${'badge ' + 
+                                                           (scan.visitor.status == 'Checked-in' ? 'bg-info' : 
+                                                            scan.visitor.status == 'In-Meeting' ? 'bg-primary' : 
+                                                            scan.visitor.status == 'Completed' ? 'bg-success' : 'bg-warning')}"
+                                                          th:text="${scan.visitor.status}">Checked-in</span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary view-scan-btn" 
+                                                            th:data-visitor-id="${scan.visitor.id}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${recentScans == null || recentScans.empty}">
+                                                <td colspan="4" class="text-center py-3">No recent scans</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-5">
+                        <!-- Scan Result Panel -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-clipboard-check me-2"></i> Scan Result</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="scan-result-placeholder" class="text-center py-5">
+                                    <i class="fas fa-qrcode fa-4x text-muted mb-3"></i>
+                                    <h5>No QR Code Scanned</h5>
+                                    <p class="text-muted">Scan a visitor QR code to view details.</p>
+                                </div>
+                                
+                                <div id="scan-result-content" class="d-none">
+                                    <div class="scan-result-status mb-3 text-center">
+                                        <div id="result-status-badge" class="d-inline-block mb-2 px-4 py-2 rounded-pill fw-bold"></div>
+                                        <h4 id="visitor-name" class="mb-0"></h4>
+                                    </div>
+                                    
+                                    <div class="visitor-info border rounded p-3 mb-3">
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="fw-bold">Visit Purpose</div>
+                                                <div id="visitor-purpose"></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="fw-bold">Appointment Time</div>
+                                                <div id="visitor

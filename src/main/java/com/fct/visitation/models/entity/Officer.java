@@ -1,68 +1,261 @@
 package com.fct.visitation.models.entity;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Set;
+
+/**
+ * Entity representing an FCT government officer who can receive visitors
+ */
 @Entity
 @Table(name = "officers")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Officer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long officerId;
-
+    private Long id;
+    
+    @Column(name = "first_name", nullable = false, length = 50)
+    private String firstName;
+    
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
+    
+    @Column(name = "email", nullable = false, length = 100, unique = true)
+    private String email;
+    
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+    
+    @Column(name = "title", length = 100)
+    private String title;
+    
+    @Column(name = "department", length = 100)
+    private String department;
+    
+    @Column(name = "staff_id", length = 50, unique = true)
+    private String staffId;
+    
     @ManyToOne
     @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
+    
+    @Column(name = "office_number", length = 20)
+    private String officeNumber;
+    
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
+    
+    @Column(name = "availability_status", length = 20)
+    private String availabilityStatus; // AVAILABLE, BUSY, ON_LEAVE, UNAVAILABLE
+    
+    @Column(name = "max_visitors_per_day")
+    private Integer maxVisitorsPerDay;
+    
+    @Column(name = "requires_approval", nullable = false)
+    private Boolean requiresApproval = false;
+    
+    @Column(name = "username", length = 50, unique = true)
+    private String username;
+    
+    @Column(name = "password", length = 255)
+    private String password;
+    
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+    
+    @OneToMany(mappedBy = "officer")
+    private Set<Visitor> visitors;
+    
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
-    @Column(nullable = false, length = 50)
-    private String position;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
-    @Column(nullable = false, length = 50)
-    private String department;
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DutyStatus dutyStatus = DutyStatus.ON_DUTY;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @Column(length = 100)
-    private String email;
+    public String getFirstName() {
+        return firstName;
+    }
 
-    @Column(length = 15)
-    private String phoneNumber;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-    // Explicit getters and setters
-    public Long getOfficerId() { return this.officerId; }
-    public void setOfficerId(Long officerId) { this.officerId = officerId; }
+    public String getLastName() {
+        return lastName;
+    }
 
-    public Facility getFacility() { return this.facility; }
-    public void setFacility(Facility facility) { this.facility = facility; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-    public String getName() { return this.name; }
-    public void setName(String name) { this.name = name; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getPosition() { return this.position; }
-    public void setPosition(String position) { this.position = position; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getDepartment() { return this.department; }
-    public void setDepartment(String department) { this.department = department; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public DutyStatus getDutyStatus() { return this.dutyStatus; }
-    public void setDutyStatus(DutyStatus dutyStatus) { this.dutyStatus = dutyStatus; }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-    public String getEmail() { return this.email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getPhoneNumber() { return this.phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public enum DutyStatus {
-        ON_DUTY, OFF_DUTY
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public String getOfficeNumber() {
+        return officeNumber;
+    }
+
+    public void setOfficeNumber(String officeNumber) {
+        this.officeNumber = officeNumber;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getAvailabilityStatus() {
+        return availabilityStatus;
+    }
+
+    public void setAvailabilityStatus(String availabilityStatus) {
+        this.availabilityStatus = availabilityStatus;
+    }
+
+    public Integer getMaxVisitorsPerDay() {
+        return maxVisitorsPerDay;
+    }
+
+    public void setMaxVisitorsPerDay(Integer maxVisitorsPerDay) {
+        this.maxVisitorsPerDay = maxVisitorsPerDay;
+    }
+
+    public Boolean getRequiresApproval() {
+        return requiresApproval;
+    }
+
+    public void setRequiresApproval(Boolean requiresApproval) {
+        this.requiresApproval = requiresApproval;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public Set<Visitor> getVisitors() {
+        return visitors;
+    }
+
+    public void setVisitors(Set<Visitor> visitors) {
+        this.visitors = visitors;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return "Officer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", title='" + title + '\'' +
+                ", department='" + department + '\'' +
+                ", staffId='" + staffId + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }

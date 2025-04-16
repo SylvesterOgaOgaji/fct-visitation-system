@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/header :: head('Admin Dashboard')}">
+    <title>Admin Dashboard</title>
+</head>
+<body class="d-flex flex-column vh-100">
+    <!-- Header -->
+    <div th:replace="~{layout/header :: header}"></div>
+    
+    <div class="d-flex flex-grow-1">
+        <!-- Admin Sidebar -->
+        <div th:replace="~{layout/sidebar :: adminSidebar}"></div>
+        
+        <main class="flex-grow-1 bg-light p-4">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard</h2>
+                    <div>
+                        <span class="badge bg-primary" sec:authentication="name">Admin User</span>
+                        <span class="badge bg-secondary" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy, HH:mm')}">12 Apr 2025, 10:30</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-primary text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Today's Visitors</h6>
+                                        <h2 class="mb-0" th:text="${todayVisitorsCount}">24</h2>
+                                    </div>
+                                    <i class="fas fa-users fa-2x"></i>
+                                </div>
+                                <div class="mt-3">
+                                    <span th:text="${todayCheckedInCount}">18</span> checked in | 
+                                    <span th:text="${todayPendingCount}">6</span> pending
+                                </div>
+                            </div>
+                            <div class="card-footer bg-primary border-top border-light border-opacity-25 text-end">
+                                <a th:href="@{/reports/visitors}" class="text-white text-decoration-none">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-success text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Facilities Status</h6>
+                                        <h2 class="mb-0" th:text="${totalFacilities}">15</h2>
+                                    </div>
+                                    <i class="fas fa-building fa-2x"></i>
+                                </div>
+                                <div class="mt-3">
+                                    <span th:text="${activeFacilities}">12</span> active | 
+                                    <span th:text="${inactiveFacilities}">3</span> inactive
+                                </div>
+                            </div>
+                            <div class="card-footer bg-success border-top border-light border-opacity-25 text-end">
+                                <a th:href="@{/admin/facilities}" class="text-white text-decoration-none">
+                                    Manage Facilities <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-warning text-dark h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Parking Status</h6>
+                                        <h2 class="mb-0" th:text="${totalParkingSpaces}">50</h2>
+                                    </div>
+                                    <i class="fas fa-parking fa-2x"></i>
+                                </div>
+                                <div class="mt-3">
+                                    <span th:text="${availableParkingSpaces}">32</span> available | 
+                                    <span th:text="${occupiedParkingSpaces}">18</span> occupied
+                                </div>
+                            </div>
+                            <div class="card-footer bg-warning border-top border-dark border-opacity-10 text-end">
+                                <a th:href="@{/parking}" class="text-dark text-decoration-none">
+                                    Manage Parking <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-danger text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Security Alerts</h6>
+                                        <h2 class="mb-0" th:text="${activeAlertsCount}">5</h2>
+                                    </div>
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
+                                <div class="mt-3">
+                                    <span th:text="${highPriorityAlertsCount}">2</span> high priority | 
+                                    <span th:text="${mediumPriorityAlertsCount}">3</span> medium
+                                </div>
+                            </div>
+                            <div class="card-footer bg-danger border-top border-light border-opacity-25 text-end">
+                                <a th:href="@{/security/alerts}" class="text-white text-decoration-none">
+                                    View Alerts <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Dashboard Content -->
+                <div class="row">
+                    <!-- Today's Visits -->
+                    <div class="col-md-8">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0"><i class="fas fa-calendar-check me-2"></i> Today's Visits</h5>
+                                    <a th:href="@{/reports/visitors}" class="btn btn-sm btn-outline-light">View All</a>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Visitor</th>
+                                                <th>Officer</th>
+                                                <th>Facility</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:if="${todayVisits.empty}">
+                                                <td colspan="6" class="text-center py-3">No visits scheduled for today</td>
+                                            </tr>
+                                            <tr th:each="visit : ${todayVisits}">
+                                                <td th:text="${#temporals.format(visit.appointmentDatetime, 'HH:mm')}">10:30</td>
+                                                <td th:text="${visit.firstName + ' ' + visit.lastName}">John Doe</td>
+                                                <td th:text="${visit.officer.firstName + ' ' + visit.officer.lastName}">Jane Smith</td>
+                                                <td th:text="${visit.facility.name}">Main Building</td>
+                                                <td>
+                                                    <span th:class="${'badge ' + 
+                                                           (visit.status == 'Pending' ? 'bg-warning' : 
+                                                            visit.status == 'Checked-in' ? 'bg-info' : 
+                                                            visit.status == 'In-Meeting' ? 'bg-primary' : 
+                                                            visit.status == 'Completed' ? 'bg-success' : 
+                                                            visit.status == 'Cancelled' ? 'bg-danger' : 'bg-secondary')}"
+                                                          th:text="${visit.status}">Status</span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/visitor/details/{id}(id=${visit.id})}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Activities -->
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i> Recent Activities</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="activity-timeline">
+                                    <div th:if="${recentActivities.empty}" class="p-3 text-center">
+                                        No recent activities
+                                    </div>
+                                    <div th:each="activity : ${recentActivities}" class="activity-item p-3 border-bottom">
+                                        <div class="d-flex">
+                                            <div class="activity-icon">
+                                                <span th:class="${'badge rounded-circle p-2 ' + 
+                                                       (activity.type == 'VISITOR' ? 'bg-primary' : 
+                                                        activity.type == 'SECURITY' ? 'bg-danger' : 
+                                                        activity.type == 'SYSTEM' ? 'bg-success' : 'bg-secondary')}">
+                                                    <i th:class="${'fas ' + 
+                                                          (activity.type == 'VISITOR' ? 'fa-user' : 
+                                                           activity.type == 'SECURITY' ? 'fa-shield-alt' : 
+                                                           activity.type == 'SYSTEM' ? 'fa-cogs' : 'fa-info')}"></i>
+                                                </span>
+                                            </div>
+                                            <div class="activity-content ms-3">
+                                                <p class="mb-1" th:text="${activity.description}">New visitor registered</p>
+                                                <small class="text-muted" th:text="${#temporals.format(activity.timestamp, 'dd-MM-yyyy HH:mm:ss')}">12-04-2025 10:30:45</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <!-- Officer Status -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-success text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0"><i class="fas fa-user-tie me-2"></i> Officer Status</h5>
+                                    <a th:href="@{/admin/officers}" class="btn btn-sm btn-outline-light">View All</a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-around mb-3">
+                                    <div class="text-center">
+                                        <h3 th:text="${totalOfficers}">50</h3>
+                                        <div class="text-muted">Total</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 th:text="${activeOfficers}">45</h3>
+                                        <div class="text-muted">Active</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 th:text="${busyOfficers}">28</h3>
+                                        <div class="text-muted">In Meetings</div>
+                                    </div>
+                                </div>
+                                
+                                <h6 class="mb-3">Officers with Most Visits Today</h6>
+                                <div class="list-group">
+                                    <div th:if="${topOfficers.empty}" class="text-center p-3">
+                                        No officer data available
+                                    </div>
+                                    <div th:each="officer : ${topOfficers}" class="list-group-item list-group-item-action">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span th:text="${officer.firstName + ' ' + officer.lastName}">Jane Smith</span>
+                                                <small class="d-block text-muted" th:text="${officer.title}">Director</small>
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill" th:text="${officer.visitCount}">8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Status -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-server me-2"></i> System Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Server Status
+                                        <span class="badge bg-success">Online</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Database
+                                        <span class="badge bg-success">Connected</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        API Services
+                                        <span class="badge bg-success">Operational</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        NIN Verification
+                                        <span th:class="${ninApiStatus ? 'badge bg-success' : 'badge bg-danger'}" 
+                                              th:text="${ninApiStatus ? 'Connected' : 'Disconnected'}">Connected</span>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-3">
+                                    <h6>System Resources</h6>
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>CPU Usage</span>
+                                            <span th:text="${cpuUsage + '%'}">35%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 th:style="'width: ' + ${cpuUsage} + '%'" 
+                                                 th:aria-valuenow="${cpuUsage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>Memory Usage</span>
+                                            <span th:text="${memoryUsage + '%'}">45%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-info" role="progressbar" 
+                                                 th:style="'width: ' + ${memoryUsage} + '%'" 
+                                                 th:aria-valuenow="${memoryUsage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>Disk Usage</span>
+                                            <span th:text="${diskUsage + '%'}">28%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" 
+                                                 th:style="'width: ' + ${diskUsage} + '%'" 
+                                                 th:aria-valuenow="${diskUsage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0"><i class="fas fa-bolt me-2"></i> Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <a th:href="@{/admin/officers/create}" class="btn btn-outline-primary w-100">
+                                            <i class="fas fa-user-plus"></i> Add Officer
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/admin/facilities/create}" class="btn btn-outline-success w-100">
+                                            <i class="fas fa-building"></i> Add Facility
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/reports}" class="btn btn-outline-info w-100">
+                                            <i class="fas fa-chart-bar"></i> Reports
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a th:href="@{/admin/settings}" class="btn btn-outline-secondary w-100">
+                                            <i class="fas fa-cog"></i> Settings
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    
+    <script>
+        $(document).ready(function() {
+            // Dashboard initialization code
+            console.log('Dashboard initialized');
+            
+            // Example of how to load real-time updates (if needed)
+            function loadRealTimeUpdates() {
+                $.ajax({
+                    url: '/api/admin/dashboard/stats',
+                    type: 'GET',
+                    success: function(data) {
+                        // Update dashboard stats
+                        // This is just an example - implement as needed
+                        console.log('Real-time stats loaded');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading real-time stats:', error);
+                    }
+                });
+            }
+            
+            // Uncomment to enable real-time updates every 60 seconds
+            // setInterval(loadRealTimeUpdates, 60000);
+        });
+    </script>
+    
+    <style>
+        /* Activity Timeline Styling */
+        .activity-timeline {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            transition: background-color 0.2s;
+        }
+        
+        .activity-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .activity-icon {
+            min-width: 36px;
+        }
+        
+        /* Make the admin sidebar fixed height on large screens */
+        @media (min-width: 992px) {
+            .admin-sidebar {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+            
+            main.flex-grow-1 {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</body>
+</html>

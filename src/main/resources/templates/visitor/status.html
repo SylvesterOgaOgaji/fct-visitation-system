@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/header :: head('Visit Status')}">
+    <title>Visit Status</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <div th:replace="~{layout/header :: header}"></div>
+    
+    <main class="container py-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-search me-2"></i> Check Visit Status
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Status Search Form (Displayed when no visitor is found) -->
+                        <div th:if="${visitor == null && !param.id}" class="status-search-form">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-clipboard-check fa-3x text-success"></i>
+                                <h4 class="mt-3">Track Your Visit Status</h4>
+                                <p>Enter your confirmation number or scan your QR code to check the current status of your visit.</p>
+                            </div>
+                            
+                            <ul class="nav nav-tabs" id="statusTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="confirmation-tab" data-bs-toggle="tab" 
+                                            data-bs-target="#confirmation-pane" type="button" role="tab" 
+                                            aria-controls="confirmation-pane" aria-selected="true">
+                                        <i class="fas fa-hashtag me-2"></i> By Confirmation Number
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="email-tab" data-bs-toggle="tab" 
+                                            data-bs-target="#email-pane" type="button" role="tab" 
+                                            aria-controls="email-pane" aria-selected="false">
+                                        <i class="fas fa-envelope me-2"></i> By Email
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="qr-tab" data-bs-toggle="tab" 
+                                            data-bs-target="#qr-pane" type="button" role="tab" 
+                                            aria-controls="qr-pane" aria-selected="false">
+                                        <i class="fas fa-qrcode me-2"></i> Scan QR Code
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content p-4 bg-light" id="statusTabContent">
+                                <!-- Confirmation Number Tab -->
+                                <div class="tab-pane fade show active" id="confirmation-pane" role="tabpanel" aria-labelledby="confirmation-tab">
+                                    <form th:action="@{/visitor/status}" method="get">
+                                        <div class="mb-3">
+                                            <label for="confirmationId" class="form-label">Confirmation Number</label>
+                                            <input type="text" class="form-control" id="confirmationId" name="id" 
+                                                   placeholder="Enter your confirmation number (e.g., VS-12345)" required>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-search me-2"></i> Check Status
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Email Tab -->
+                                <div class="tab-pane fade" id="email-pane" role="tabpanel" aria-labelledby="email-tab">
+                                    <form th:action="@{/visitor/status-by-email}" method="get">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="email" name="email" 
+                                                   placeholder="Enter the email used during registration" required>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-search me-2"></i> Find Visits
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- QR Code Tab -->
+                                <div class="tab-pane fade" id="qr-pane" role="tabpanel" aria-labelledby="qr-tab">
+                                    <div class="text-center mb-4">
+                                        <div id="qr-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                                        <p class="text-muted mt-2">Position your QR code within the scanner frame.</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <button id="start-scanner-btn" class="btn btn-success">
+                                            <i class="fas fa-camera me-2"></i> Start Scanner
+                                        </button>
+                                        <button id="stop-scanner-btn" class="btn btn-danger d-none">
+                                            <i class="fas fa-stop-circle me-2"></i> Stop Scanner
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- No Visit Found Message -->
+                        <div th:if="${visitor == null && param.id}" class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span>No visit found with the provided information. Please check your confirmation number and try again.</span>
+                            <a th:href="@{/visitor/status}" class="btn btn-sm btn-warning mt-2">Try Again</a>
+                        </div>
+                        
+                        <!-- Status Details (Displayed when visitor is found) -->
+                        <div th:if="${visitor != null}" class="status-details">
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4>Visit Status</h4>
+                                    <span th:class="${'badge fs-6 ' + 
+                                           (visitor.status == 'Pending' ? 'bg-warning' : 
+                                            visitor.status == 'Checked-in' ? 'bg-info' : 
+                                            visitor.status == 'In-Meeting' ? 'bg-primary' : 
+                                            visitor.status == 'Completed' ? 'bg-success' : 
+                                            visitor.status == 'Cancelled' ? 'bg-danger' : 'bg-secondary')}"
+                                          th:text="${visitor.status}">Status</span>
+                                </div>
+                                
+                                <!-- Status Timeline -->
+                                <div class="status-timeline mt-4">
+                                    <div class="timeline-track"></div>
+                                    <div class="timeline-steps">
+                                        <div th:class="${'timeline-step ' + (visitor.status != null ? 'completed' : '')}">
+                                            <div class="timeline-icon">
+                                                <i class="fas fa-user-plus"></i>
+                                            </div>
+                                            <div class="timeline-info">
+                                                <p class="timeline-title">Registered</p>
+                                                <p class="timeline-date" th:text="${#temporals.format(visitor.createdAt, 'dd-MM-yyyy HH:mm')}">01-01-2025 10:00</p>
+                                            </div>
+                                        </div>
+                                        <div th:class="${'timeline-step ' + (visitor.status == 'Checked-in' || visitor.status == 'In-Meeting' || visitor.status == 'Completed' ? 'completed' : '')}">
+                                            <div class="timeline-icon">
+                                                <i class="fas fa-clipboard-check"></i>
+                                            </div>
+                                            <div class="timeline-info">
+                                                <p class="timeline-title">Checked In</p>
+                                                <p class="timeline-date" th:text="${scanLogs.size() > 0 ? #temporals.format(scanLogs[0].scannedAt, 'dd-MM-yyyy HH:mm') : 'Pending'}">Pending</p>
+                                            </div>
+                                        </div>
+                                        <div th:class="${'timeline-step ' + (visitor.status == 'In-Meeting' || visitor.status == 'Completed' ? 'completed' : '')}">
+                                            <div class="timeline-icon">
+                                                <i class="fas fa-handshake"></i>
+                                            </div>
+                                            <div class="timeline-info">
+                                                <p class="timeline-title">In Meeting</p>
+                                                <p class="timeline-date" th:text="${visitor.status == 'In-Meeting' || visitor.status == 'Completed' ? 
+                                                                                    (#temporals.format(visitor.updatedAt, 'dd-MM-yyyy HH:mm')) : 'Pending'}">Pending</p>
+                                            </div>
+                                        </div>
+                                        <div th:class="${'timeline-step ' + (visitor.status == 'Completed' ? 'completed' : '')}">
+                                            <div class="timeline-icon">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <div class="timeline-info">
+                                                <p class="timeline-title">Completed</p>
+                                                <p class="timeline-date" th:text="${visitor.status == 'Completed' ? 
+                                                                                    (#temporals.format(visitor.updatedAt, 'dd-MM-yyyy HH:mm')) : 'Pending'}">Pending</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-info-circle me-2"></i> Visit Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Confirmation Number:</strong> <span th:text="${'VS-' + visitor.id}">VS-12345</span></p>
+                                            <p class="mb-1"><strong>Visitor Name:</strong> <span th:text="${visitor.firstName + ' ' + visitor.lastName}">John Doe</span></p>
+                                            <p class="mb-1"><strong>Date & Time:</strong> <span th:text="${#temporals.format(visitor.appointmentDatetime, 'dd-MM-yyyy HH:mm')}">12-04-2025 10:30</span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Facility:</strong> <span th:text="${visitor.facility.name}">Main Administration Building</span></p>
+                                            <p class="mb-1"><strong>Officer:</strong> <span th:text="${visitor.officer.firstName + ' ' + visitor.officer.lastName}">Jane Smith</span></p>
+                                            <p class="mb-1"><strong>Purpose:</strong> <span th:text="${visitor.purposeOfVisit.description}">Official Meeting</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- QR Code -->
+                            <div class="card mb-4">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title mb-3"><i class="fas fa-qrcode me-2"></i> Your QR Code</h5>
+                                    <div class="qr-wrapper mb-3">
+                                        <img th:src="@{'/qr-code/' + ${visitor.id}}" alt="QR Code" class="img-fluid border p-2" style="max-width: 200px;">
+                                    </div>
+                                    <p class="text-muted mb-1">Please present this QR code at the security checkpoint when you arrive.</p>
+                                    <a th:href="@{'/qr-code/download/' + ${visitor.id}}" class="btn btn-outline-primary mt-2">
+                                        <i class="fas fa-download me-2"></i> Download QR Code
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions for the visitor -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-cogs me-2"></i> Available Actions</h5>
+                                    
+                                    <!-- Only allow modifications if the visit is still pending -->
+                                    <div th:if="${visitor.status == 'Pending'}">
+                                        <a th:href="@{/visitor/reschedule/{id}(id=${visitor.id})}" class="btn btn-warning me-2">
+                                            <i class="fas fa-calendar-alt me-2"></i> Reschedule Visit
+                                        </a>
+                                        <a th:href="@{/visitor/edit/{id}(id=${visitor.id})}" class="btn btn-primary me-2">
+                                            <i class="fas fa-edit me-2"></i> Edit Details
+                                        </a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelVisitModal">
+                                            <i class="fas fa-times-circle me-2"></i> Cancel Visit
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- For completed or cancelled visits -->
+                                    <div th:if="${visitor.status == 'Completed' || visitor.status == 'Cancelled'}">
+                                        <a th:href="@{/visitor/registration}" class="btn btn-success me-2">
+                                            <i class="fas fa-plus-circle me-2"></i> Schedule New Visit
+                                        </a>
+                                        <a href="javascript:window.print();" class="btn btn-secondary">
+                                            <i class="fas fa-print me-2"></i> Print Details
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- For checked-in or in-meeting visits -->
+                                    <div th:if="${visitor.status == 'Checked-in' || visitor.status == 'In-Meeting'}">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i> 
+                                            Your visit is currently in progress. If you need assistance, please contact the reception desk.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Cancel Visit Confirmation Modal -->
+    <div class="modal fade" id="cancelVisitModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Cancel Visit
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel your visit scheduled for <strong th:text="${visitor != null ? #temporals.format(visitor.appointmentDatetime, 'dd-MM-yyyy HH:mm') : ''}">12-04-2025 10:30</strong>?</p>
+                    <p>This action cannot be undone. You will need to register again if you wish to visit in the future.</p>
+                    
+                    <form id="cancelForm" th:action="@{/visitor/cancel}" method="post" th:if="${visitor != null}">
+                        <input type="hidden" name="visitorId" th:value="${visitor.id}">
+                        <div class="mb-3">
+                            <label for="cancellationReason" class="form-label">Reason for Cancellation</label>
+                            <select class="form-select" id="cancellationReason" name="cancellationReason" required>
+                                <option value="">Select a reason</option>
+                                <option value="Schedule Conflict">Schedule Conflict</option>
+                                <option value="No Longer Required">No Longer Required</option>
+                                <option value="Meeting Rescheduled">Meeting Rescheduled</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="otherReasonGroup" style="display: none;">
+                            <label for="otherReason" class="form-label">Please Specify</label>
+                            <textarea class="form-control" id="otherReason" name="otherReason" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                        <i class="fas fa-times-circle me-2"></i> Confirm Cancellation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    
+    <!-- HTML5 QR Code Scanner Script -->
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // QR Code Scanner
+            const html5QrCode = new Html5Qrcode("qr-reader");
+            const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            $('#start-scanner-btn').click(function() {
+                html5QrCode.start({ facingMode: "environment" }, qrConfig, onScanSuccess)
+                    .then(() => {
+                        $('#start-scanner-btn').addClass('d-none');
+                        $('#stop-scanner-btn').removeClass('d-none');
+                    })
+                    .catch(err => {
+                        alert("Error starting QR scanner: " + err);
+                    });
+            });
+            
+            $('#stop-scanner-btn').click(function() {
+                html5QrCode.stop()
+                    .then(() => {
+                        $('#stop-scanner-btn').addClass('d-none');
+                        $('#start-scanner-btn').removeClass('d-none');
+                    })
+                    .catch(err => {
+                        console.error("Error stopping QR scanner:", err);
+                    });
+            });
+            
+            function onScanSuccess(decodedText) {
+                // Stop scanning once we get a result
+                html5QrCode.stop();
+                
+                // Check if the QR code contains a valid URL with a visitor ID
+                if (decodedText.includes("/visitor/") || decodedText.includes("?id=")) {
+                    let visitorId;
+                    
+                    // Extract visitor ID from the QR code URL
+                    if (decodedText.includes("?id=")) {
+                        visitorId = decodedText.split("?id=")[1];
+                    } else {
+                        const urlParts = decodedText.split("/");
+                        visitorId = urlParts[urlParts.length - 1];
+                    }
+                    
+                    // Redirect to visitor status page with the ID
+                    window.location.href = "/visitor/status?id=" + visitorId;
+                } else {
+                    alert("Invalid QR code. Please ensure you're scanning a valid visitor QR code.");
+                    $('#stop-scanner-btn').addClass('d-none');
+                    $('#start-scanner-btn').removeClass('d-none');
+                }
+            }
+            
+            // Handle cancellation reason dropdown
+            $('#cancellationReason').change(function() {
+                if ($(this).val() === "Other") {
+                    $('#otherReasonGroup').show();
+                    $('#otherReason').attr('required', true);
+                } else {
+                    $('#otherReasonGroup').hide();
+                    $('#otherReason').attr('required', false);
+                }
+            });
+            
+            // Handle cancel confirmation button
+            $('#confirmCancelBtn').click(function() {
+                const form = $('#cancelForm');
+                const selectedReason = $('#cancellationReason').val();
+                
+                if (!selectedReason) {
+                    alert("Please select a reason for cancellation.");
+                    return;
+                }
+                
+                if (selectedReason === "Other" && !$('#otherReason').val().trim()) {
+                    alert("Please specify the reason for cancellation.");
+                    return;
+                }
+                
+                // Submit the form
+                form.submit();
+            });
+        });
+    </script>
+    
+    <style>
+        /* Status Timeline Styling */
+        .status-timeline {
+            position: relative;
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+        
+        .timeline-track {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+        
+        .timeline-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .timeline-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            border: 4px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #adb5bd;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-step.completed .timeline-icon {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
+        }
+        
+        .timeline-info {
+            text-align: center;
+            max-width: 120px;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+    </style>
+</body>
+</html>

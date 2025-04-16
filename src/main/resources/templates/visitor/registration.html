@@ -1,131 +1,561 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{layout/header :: head('Visitor Registration')}">
     <title>Visitor Registration</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/fct-visitation/">FCT Visitation System</a>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title mb-0">Visitor Registration</h2>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <div th:replace="~{layout/header :: header}"></div>
+    
+    <main class="container py-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-user-plus me-2"></i> Visitor Registration
+                        </h3>
                     </div>
                     <div class="card-body">
-                        <!-- Error message display -->
-                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-                            <span th:text="${errorMessage}">Error message</span>
+                        <!-- Progress Steps -->
+                        <div class="registration-steps mb-4">
+                            <div class="d-flex justify-content-between">
+                                <div class="step active" id="step-1">
+                                    <div class="step-circle">1</div>
+                                    <div class="step-label">Personal Details</div>
+                                </div>
+                                <div class="step" id="step-2">
+                                    <div class="step-circle">2</div>
+                                    <div class="step-label">Visit Details</div>
+                                </div>
+                                <div class="step" id="step-3">
+                                    <div class="step-circle">3</div>
+                                    <div class="step-label">Vehicle Information</div>
+                                </div>
+                                <div class="step" id="step-4">
+                                    <div class="step-circle">4</div>
+                                    <div class="step-label">Confirmation</div>
+                                </div>
+                            </div>
+                            <div class="progress mt-2" style="height: 5px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%"></div>
+                            </div>
                         </div>
                         
-                        <form th:action="@{/visitor/register}" th:object="${visitor}" method="post" class="needs-validation" novalidate>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="firstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
-                                    <div class="invalid-feedback">First name is required</div>
+                        <!-- Error Message Display -->
+                        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+                        
+                        <!-- Multi-step Form -->
+                        <form id="visitorForm" th:action="@{/visitor/register}" method="post" th:object="${visitorRequest}">
+                            <!-- Step 1: Personal Details -->
+                            <div class="form-step" id="form-step-1">
+                                <h4 class="mb-3">Personal Information</h4>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="phoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">+234</span>
+                                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" 
+                                                   placeholder="e.g. 8012345678" pattern="[0-9]{10}" required>
+                                        </div>
+                                        <div class="form-text">Enter 10 digits without the leading zero</div>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="nin" class="form-label">National Identification Number (NIN) <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="nin" th:field="*{nin}" 
+                                               pattern="[0-9]{11}" placeholder="11-digit NIN" required>
+                                        <div class="form-text">Enter your 11-digit NIN for identity verification</div>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nin')}" th:errors="*{nin}"></div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="address" class="form-label">Residential Address</label>
+                                        <textarea class="form-control" id="address" th:field="*{address}" rows="2"></textarea>
+                                    </div>
                                 </div>
                                 
-                                <div class="col-md-6 mb-3">
-                                    <label for="lastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
-                                    <div class="invalid-feedback">Last name is required</div>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="button" class="btn btn-success next-step">
+                                        Next <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
                                 </div>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                                    <div class="invalid-feedback">Valid email is required</div>
+                            <!-- Step 2: Visit Details -->
+                            <div class="form-step d-none" id="form-step-2">
+                                <h4 class="mb-3">Visit Information</h4>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="facilityId" class="form-label">Facility to Visit <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="facilityId" th:field="*{facilityId}" required>
+                                            <option value="">Select a facility</option>
+                                            <option th:each="facility : ${facilities}" 
+                                                    th:value="${facility.id}" 
+                                                    th:text="${facility.name}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('facilityId')}" th:errors="*{facilityId}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="officerId" class="form-label">Officer to Meet <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="officerId" th:field="*{officerId}" required>
+                                            <option value="">First select a facility</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('officerId')}" th:errors="*{officerId}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="purposeId" class="form-label">Purpose of Visit <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="purposeId" th:field="*{purposeId}" required>
+                                            <option value="">Select purpose</option>
+                                            <option th:each="purpose : ${purposes}" 
+                                                    th:value="${purpose.id}" 
+                                                    th:text="${purpose.description}"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('purposeId')}" th:errors="*{purposeId}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="appointmentDatetime" class="form-label">Appointment Date and Time <span class="text-danger">*</span></label>
+                                        <input type="datetime-local" class="form-control" id="appointmentDatetime" 
+                                               th:field="*{appointmentDatetime}" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('appointmentDatetime')}" th:errors="*{appointmentDatetime}"></div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="additionalNotes" class="form-label">Additional Notes</label>
+                                        <textarea class="form-control" id="additionalNotes" th:field="*{additionalNotes}" rows="2"></textarea>
+                                    </div>
                                 </div>
                                 
-                                <div class="col-md-6 mb-3">
-                                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
-                                    <div class="invalid-feedback">Phone number is required</div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-success next-step">
+                                        Next <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="nin" class="form-label">National Identification Number (NIN)</label>
-                                <input type="text" class="form-control" id="nin" th:field="*{nin}" required>
-                                <div class="invalid-feedback">Valid NIN is required</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="carType" class="form-label">Car Type</label>
-                                <select class="form-select" id="carType" th:field="*{carType}" required>
-                                    <option value="">Select Car Type</option>
-                                    <option value="OWN">Own Car</option>
-                                    <option value="RENTED">Rented Car</option>
-                                    <option value="NONE">No Car</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a car type</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="facility" class="form-label">Facility</label>
-                                <select class="form-select" id="facility" th:field="*{facility.facilityId}" required>
-                                    <option value="">Select Facility</option>
-                                    <option th:each="facility : ${facilities}" th:value="${facility.facilityId}" th:text="${facility.facilityName}"></option>
-                                </select>
-                                <div class="invalid-feedback">Please select a facility</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="officer" class="form-label">Officer to Visit</label>
-                                <select class="form-select" id="officer" th:field="*{officer.officerId}" required>
-                                    <option value="">Select Officer</option>
-                                </select>
-                                <div class="invalid-feedback">Please select an officer</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="purposeOfVisit" class="form-label">Purpose of Visit</label>
-                                <select class="form-select" id="purposeOfVisit" th:field="*{purposeOfVisit.purposeId}" required>
-                                    <option value="">Select Purpose</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a purpose</div>
-                            </div>
-                            
-                            <!-- Replace the datetime-local input with separate date and time inputs -->
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="appointmentDate" class="form-label">Appointment Date</label>
-                                    <input type="date" class="form-control" id="appointmentDate" required>
-                                    <div class="invalid-feedback">Please select a valid date</div>
+                            <!-- Step 3: Vehicle Information -->
+                            <div class="form-step d-none" id="form-step-3">
+                                <h4 class="mb-3">Vehicle Information</h4>
+                                
+                                <div class="form-group mb-4">
+                                    <label class="form-label">Will you be coming with a vehicle? <span class="text-danger">*</span></label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="carType" id="noVehicle" th:field="*{carType}" value="None" checked>
+                                        <label class="form-check-label" for="noVehicle">
+                                            No, I won't be using a vehicle
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="carType" id="ownVehicle" th:field="*{carType}" value="Own">
+                                        <label class="form-check-label" for="ownVehicle">
+                                            Yes, I'll be using my own vehicle
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="carType" id="rentedVehicle" th:field="*{carType}" value="Rented">
+                                        <label class="form-check-label" for="rentedVehicle">
+                                            Yes, I'll be using a hired/rented vehicle with driver
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="appointmentTime" class="form-label">Appointment Time</label>
-                                    <input type="time" class="form-control" id="appointmentTime" required>
-                                    <div class="invalid-feedback">Please select a valid time</div>
+                                
+                                <!-- Own Vehicle Details (Conditionally Displayed) -->
+                                <div class="vehicle-details own-vehicle d-none">
+                                    <h5 class="mb-3">Own Vehicle Details</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="registrationNumber" class="form-label">Vehicle Registration Number</label>
+                                            <input type="text" class="form-control" id="registrationNumber" th:field="*{carDetails.registrationNumber}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="model" class="form-label">Vehicle Model</label>
+                                            <input type="text" class="form-control" id="model" th:field="*{carDetails.model}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="color" class="form-label">Vehicle Color</label>
+                                            <input type="text" class="form-control" id="color" th:field="*{carDetails.color}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rented Vehicle Details (Conditionally Displayed) -->
+                                <div class="vehicle-details rented-vehicle d-none">
+                                    <h5 class="mb-3">Rented Vehicle Details</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="rentedRegistrationNumber" class="form-label">Vehicle Registration Number</label>
+                                            <input type="text" class="form-control" id="rentedRegistrationNumber" th:field="*{carDetails.registrationNumber}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rentedModel" class="form-label">Vehicle Model</label>
+                                            <input type="text" class="form-control" id="rentedModel" th:field="*{carDetails.model}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="rentedColor" class="form-label">Vehicle Color</label>
+                                            <input type="text" class="form-control" id="rentedColor" th:field="*{carDetails.color}">
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mb-3 mt-4">Driver Information</h5>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i> 
+                                        Driver details will be verified at security checkpoint. Please ensure they bring valid identification.
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="driverName" class="form-label">Driver's Full Name</label>
+                                            <input type="text" class="form-control" id="driverName" th:field="*{driverDetails.name}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="driverNin" class="form-label">Driver's NIN</label>
+                                            <input type="text" class="form-control" id="driverNin" th:field="*{driverDetails.nin}" 
+                                                   pattern="[0-9]{11}" placeholder="11-digit NIN">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="driverLicense" class="form-label">Driver's License Number</label>
+                                            <input type="text" class="form-control" id="driverLicense" th:field="*{driverDetails.licenseNumber}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="driverContact" class="form-label">Driver's Contact Number</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">+234</span>
+                                                <input type="tel" class="form-control" id="driverContact" th:field="*{driverDetails.contactNumber}" 
+                                                       placeholder="e.g. 8012345678" pattern="[0-9]{10}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i> Previous
+                                    </button>
+                                    <button type="button" class="btn btn-success next-step">
+                                        Next <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
                                 </div>
                             </div>
                             
-                            <!-- Hidden field to store the combined datetime -->
-                            <input type="hidden" id="appointmentDateTime" th:field="*{appointmentDateTime}" />
-                            
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-primary">Register</button>
+                            <!-- Step 4: Review and Submit -->
+                            <div class="form-step d-none" id="form-step-4">
+                                <h4 class="mb-3">Review Your Information</h4>
+                                
+                                <div class="review-section">
+                                    <h5><i class="fas fa-user me-2"></i> Personal Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Name:</strong> <span id="review-name"></span></p>
+                                            <p class="mb-1"><strong>Email:</strong> <span id="review-email"></span></p>
+                                            <p class="mb-1"><strong>Phone:</strong> <span id="review-phone"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>NIN:</strong> <span id="review-nin"></span></p>
+                                            <p class="mb-1"><strong>Address:</strong> <span id="review-address"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="review-section">
+                                    <h5><i class="fas fa-calendar-alt me-2"></i> Visit Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Facility:</strong> <span id="review-facility"></span></p>
+                                            <p class="mb-1"><strong>Officer:</strong> <span id="review-officer"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Purpose:</strong> <span id="review-purpose"></span></p>
+                                            <p class="mb-1"><strong>Appointment:</strong> <span id="review-appointment"></span></p>
+                                        </div>
+                                    </div>
+                                    <p class="mb-1"><strong>Additional Notes:</strong> <span id="review-notes"></span></p>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="review-section" id="vehicle-review-section">
+                                    <h5><i class="fas fa-car me-2"></i> Vehicle Information</h5>
+                                    <p id="no-vehicle-text" class="d-none">No vehicle registered for this visit.</p>
+                                    
+                                    <div id="vehicle-details-review" class="d-none">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Vehicle Type:</strong> <span id="review-vehicle-type"></span></p>
+                                                <p class="mb-1"><strong>Registration:</strong> <span id="review-registration"></span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Model:</strong> <span id="review-model"></span></p>
+                                                <p class="mb-1"><strong>Color:</strong> <span id="review-color"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="driver-details-review" class="d-none mt-3">
+                                        <h6>Driver Information</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>Name:</strong> <span id="review-driver-name"></span></p>
+                                                <p class="mb-1"><strong>NIN:</strong> <span id="review-driver-nin"></span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1"><strong>License:</strong> <span id="review-driver-license"></span></p>
+                                                <p class="mb-1"><strong>Contact:</strong> <span id="review-driver-contact"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms-check" required>
+                                        <label class="form-check-label" for="terms-check">
+                                            I confirm that all the information provided is accurate and correct. I understand that providing false information may lead to denial of entry.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i> Previous
+                                    </button>
+                                    <button type="submit" class="btn btn-success" id="submit-btn" disabled>
+                                        <i class="fas fa-check-circle me-2"></i> Submit Registration
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/main.js}"></script>
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    
+    <!-- Custom JavaScript for Form Steps -->
+    <script>
+        $(document).ready(function() {
+            // Step Navigation
+            $('.next-step').click(function() {
+                let currentStep = $(this).closest('.form-step');
+                let currentStepId = currentStep.attr('id').split('-')[2];
+                let nextStepId = parseInt(currentStepId) + 1;
+                
+                // Validate current step before proceeding
+                if (validateStep(currentStepId)) {
+                    currentStep.addClass('d-none');
+                    $('#form-step-' + nextStepId).removeClass('d-none');
+                    
+                    // Update progress bar and step indicators
+                    $('.step').removeClass('active');
+                    $('#step-' + nextStepId).addClass('active');
+                    $('.progress-bar').css('width', (nextStepId * 25) + '%');
+                    
+                    // If it's the review step, populate the review sections
+                    if (nextStepId === 4) {
+                        populateReview();
+                    }
+                }
+            });
+            
+            $('.prev-step').click(function() {
+                let currentStep = $(this).closest('.form-step');
+                let currentStepId = currentStep.attr('id').split('-')[2];
+                let prevStepId = parseInt(currentStepId) - 1;
+                
+                currentStep.addClass('d-none');
+                $('#form-step-' + prevStepId).removeClass('d-none');
+                
+                // Update progress bar and step indicators
+                $('.step').removeClass('active');
+                $('#step-' + prevStepId).addClass('active');
+                $('.progress-bar').css('width', (prevStepId * 25) + '%');
+            });
+            
+            // Vehicle Type Selection Logic
+            $('input[name="carType"]').change(function() {
+                $('.vehicle-details').addClass('d-none');
+                
+                if ($(this).val() === 'Own') {
+                    $('.own-vehicle').removeClass('d-none');
+                } else if ($(this).val() === 'Rented') {
+                    $('.rented-vehicle').removeClass('d-none');
+                }
+            });
+            
+            // Terms checkbox for submit button
+            $('#terms-check').change(function() {
+                $('#submit-btn').prop('disabled', !this.checked);
+            });
+            
+            // Load officers by facility
+            $('#facilityId').change(function() {
+                let facilityId = $(this).val();
+                if (facilityId) {
+                    $.ajax({
+                        url: '/api/officers/facility/' + facilityId,
+                        type: 'GET',
+                        success: function(response) {
+                            let officerSelect = $('#officerId');
+                            officerSelect.empty();
+                            officerSelect.append('<option value="">Select an officer</option>');
+                            
+                            for (let officer of response) {
+                                officerSelect.append('<option value="' + officer.id + '">' + 
+                                                    officer.firstName + ' ' + officer.lastName + 
+                                                    ' (' + officer.title + ')</option>');
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Validate each step
+            function validateStep(stepId) {
+                let isValid = true;
+                
+                switch(stepId) {
+                    case '1':
+                        // Personal details validation
+                        let firstName = $('#firstName').val();
+                        let lastName = $('#lastName').val();
+                        let email = $('#email').val();
+                        let phone = $('#phoneNumber').val();
+                        let nin = $('#nin').val();
+                        
+                        if (!firstName || !lastName || !email || !phone || !nin) {
+                            alert('Please fill in all required fields.');
+                            isValid = false;
+                        } else if (nin.length !== 11 || !/^\d+$/.test(nin)) {
+                            alert('NIN must be 11 digits.');
+                            isValid = false;
+                        } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+                            alert('Phone number must be 10 digits (excluding the leading zero).');
+                            isValid = false;
+                        }
+                        break;
+                        
+                    case '2':
+                        // Visit details validation
+                        let facilityId = $('#facilityId').val();
+                        let officerId = $('#officerId').val();
+                        let purposeId = $('#purposeId').val();
+                        let appointmentDatetime = $('#appointmentDatetime').val();
+                        
+                        if (!facilityId || !officerId || !purposeId || !appointmentDatetime) {
+                            alert('Please fill in all required fields.');
+                            isValid = false;
+                        }
+                        break;
+                        
+                    case '3':
+                        // Vehicle information validation
+                        let carType = $('input[name="carType"]:checked').val();
+                        
+                        if (carType === 'Own') {
+                            let regNumber = $('#registrationNumber').val();
+                            let model = $('#model').val();
+                            let color = $('#color').val();
+                            
+                            if (!regNumber || !model || !color) {
+                                alert('Please fill in all vehicle details.');
+                                isValid = false;
+                            }
+                        } else if (carType === 'Rented') {
+                            let rentedRegNumber = $('#rentedRegistrationNumber').val();
+                            let rentedModel = $('#rentedModel').val();
+                            let rentedColor = $('#rentedColor').val();
+                            let driverName = $('#driverName').val();
+                            let driverNin = $('#driverNin').val();
+                            
+                            if (!rentedRegNumber || !rentedModel || !rentedColor || !driverName || !driverNin) {
+                                alert('Please fill in all vehicle and driver details.');
+                                isValid = false;
+                            } else if (driverNin.length !== 11 || !/^\d+$/.test(driverNin)) {
+                                alert('Driver NIN must be 11 digits.');
+                                isValid = false;
+                            }
+                        }
+                        break;
+                }
+                
+                return isValid;
+            }
+            
+            // Populate the review section
+            function populateReview() {
+                // Personal details
+                $('#review-name').text($('#firstName').val() + ' ' + $('#lastName').val());
+                $('#review-email').text($('#email').val());
+                $('#review-phone').text('+234 ' + $('#phoneNumber').val());
+                $('#review-nin').text($('#nin').val());
+                $('#review-address').text($('#address').val() || 'Not provided');
+                
+                // Visit details
+                $('#review-facility').text($('#facilityId option:selected').text());
+                $('#review-officer').text($('#officerId option:selected').text());
+                $('#review-purpose').text($('#purposeId option:selected').text());
+                
+                let appointmentDate = new Date($('#appointmentDatetime').val());
+                $('#review-appointment').text(appointmentDate.toLocaleString());
+                
+                $('#review-notes').text($('#additionalNotes').val() || 'None');
+                
+                // Vehicle details
+                let carType = $('input[name="carType"]:checked').val();
+                
+                if (carType === 'None') {
+                    $('#no-vehicle-text').removeClass('d-none');
+                    $('#vehicle-details-review').addClass('d-none');
+                    $('#driver-details-review').addClass('d-none');
+                } else {
+                    $('#no-vehicle-text').addClass('d-none');
+                    $('#vehicle-details-review').removeClass('d-none');
+                    
+                    $('#review-vehicle-type').text(carType === 'Own' ? 'Personal Vehicle' : 'Hired/Rented Vehicle');
+                    
+                    if (carType === 'Own') {
+                        $('#review-registration').text($('#registrationNumber').val());
+                        $('#review-model').text($('#model').val());
+                        $('#review-color').text($('#color').val());
+                        $('#driver-details-review').addClass('d-none');
+                    } else {
+                        $('#review-registration').text($('#rentedRegistrationNumber').val());
+                        $('#review-model').text($('#rentedModel').val());
+                        $('#review-color').text($('#rentedColor').val());
+                        
+                        $('#driver-details-review').removeClass('d-none');
+                        $('#review-driver-name').text($('#driverName').val());
+                        $('#review-driver-nin').text($('#driverNin').val());
+                        $('#review-driver-license').text($('#driverLicense').val() || 'Not provided');
+                        $('#review-driver-contact').text('+234 ' + ($('#driverContact').val() || 'Not provided'));
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

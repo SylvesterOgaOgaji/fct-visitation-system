@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Admin Sidebar -->
+    <div th:fragment="adminSidebar" class="admin-sidebar bg-dark text-white p-3">
+        <div class="d-flex align-items-center mb-4">
+            <img th:src="@{/images/fct-logo.png}" alt="FCT Logo" width="40" height="40" class="me-2">
+            <h5 class="mb-0">Admin Dashboard</h5>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/admin/dashboard}" th:classappend="${activeTab == 'dashboard'} ? 'active bg-success' : ''">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/admin/officers}" th:classappend="${activeTab == 'officers'} ? 'active bg-success' : ''">
+                    <i class="fas fa-user-tie me-2"></i> Officer Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/admin/facilities}" th:classappend="${activeTab == 'facilities'} ? 'active bg-success' : ''">
+                    <i class="fas fa-building me-2"></i> Facility Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/parking}" th:classappend="${activeTab == 'parking'} ? 'active bg-success' : ''">
+                    <i class="fas fa-parking me-2"></i> Parking Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/checkpoint}" th:classappend="${activeTab == 'checkpoints'} ? 'active bg-success' : ''">
+                    <i class="fas fa-check-circle me-2"></i> Checkpoint Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/security/alerts/admin}" th:classappend="${activeTab == 'security'} ? 'active bg-success' : ''">
+                    <i class="fas fa-shield-alt me-2"></i> Security Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/reports}" th:classappend="${activeTab == 'reports'} ? 'active bg-success' : ''">
+                    <i class="fas fa-chart-bar me-2"></i> Reports & Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/admin/settings}" th:classappend="${activeTab == 'settings'} ? 'active bg-success' : ''">
+                    <i class="fas fa-cog me-2"></i> System Settings
+                </a>
+            </li>
+        </ul>
+        
+        <hr class="my-3 bg-secondary">
+        
+        <div class="user-info">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fs-4 me-2"></i>
+                <div>
+                    <p class="mb-0 fw-bold" sec:authentication="name">Admin User</p>
+                    <small class="text-muted">Administrator</small>
+                </div>
+            </div>
+            <a class="btn btn-outline-light btn-sm w-100 mt-3" th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Security Sidebar -->
+    <div th:fragment="securitySidebar" class="security-sidebar bg-dark text-white p-3">
+        <div class="d-flex align-items-center mb-4">
+            <img th:src="@{/images/fct-logo.png}" alt="FCT Logo" width="40" height="40" class="me-2">
+            <h5 class="mb-0">Security Portal</h5>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/checkpoint/scan}" th:classappend="${activeTab == 'scan'} ? 'active bg-success' : ''">
+                    <i class="fas fa-qrcode me-2"></i> Scan QR Code
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/security/alerts}" th:classappend="${activeTab == 'alerts'} ? 'active bg-success' : ''">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Security Alerts
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/vehicle/verify}" th:classappend="${activeTab == 'vehicles'} ? 'active bg-success' : ''">
+                    <i class="fas fa-car me-2"></i> Vehicle Verification
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/parking/allocate}" th:classappend="${activeTab == 'parking'} ? 'active bg-success' : ''">
+                    <i class="fas fa-parking me-2"></i> Parking Allocation
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/security/visitors}" th:classappend="${activeTab == 'visitors'} ? 'active bg-success' : ''">
+                    <i class="fas fa-users me-2"></i> Today's Visitors
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/reports/security}" th:classappend="${activeTab == 'reports'} ? 'active bg-success' : ''">
+                    <i class="fas fa-file-alt me-2"></i> Security Reports
+                </a>
+            </li>
+        </ul>
+        
+        <hr class="my-3 bg-secondary">
+        
+        <div class="user-info">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-shield fs-4 me-2"></i>
+                <div>
+                    <p class="mb-0 fw-bold" sec:authentication="name">Security Officer</p>
+                    <small class="text-muted">Security Personnel</small>
+                </div>
+            </div>
+            <a class="btn btn-outline-light btn-sm w-100 mt-3" th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Officer Sidebar -->
+    <div th:fragment="officerSidebar" class="officer-sidebar bg-dark text-white p-3">
+        <div class="d-flex align-items-center mb-4">
+            <img th:src="@{/images/fct-logo.png}" alt="FCT Logo" width="40" height="40" class="me-2">
+            <h5 class="mb-0">Officer Portal</h5>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/officer/dashboard}" th:classappend="${activeTab == 'dashboard'} ? 'active bg-success' : ''">
+                    <i class="fas fa-calendar-check me-2"></i> My Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/officer/visitors}" th:classappend="${activeTab == 'visitors'} ? 'active bg-success' : ''">
+                    <i class="fas fa-users me-2"></i> My Visitors
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/officer/history}" th:classappend="${activeTab == 'history'} ? 'active bg-success' : ''">
+                    <i class="fas fa-history me-2"></i> Visit History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/reports/visitors}" th:classappend="${activeTab == 'reports'} ? 'active bg-success' : ''">
+                    <i class="fas fa-chart-line me-2"></i> Visit Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" th:href="@{/officer/availability}" th:classappend="${activeTab == 'availability'} ? 'active bg-success' : ''">
+                    <i class="fas fa-clock me-2"></i> My Availability
+                </a>
+            </li>
+        </ul>
+        
+        <hr class="my-3 bg-secondary">
+        
+        <div class="user-info">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-tie fs-4 me-2"></i>
+                <div>
+                    <p class="mb-0 fw-bold" sec:authentication="name">Government Officer</p>
+                    <small class="text-muted">FCT Officer</small>
+                </div>
+            </div>
+            <a class="btn btn-outline-light btn-sm w-100 mt-3" th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </div>
+    </div>
+</body>
+</html>
