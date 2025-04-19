@@ -46,14 +46,14 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
      * 
      * @return List of active facilities
      */
-    List<Facility> findByIsActiveTrue();
+    List<Facility> findByActiveTrue();
     
     /**
      * Find inactive facilities
      * 
      * @return List of inactive facilities
      */
-    List<Facility> findByIsActiveFalse();
+    List<Facility> findByActiveFalse();
     
     /**
      * Find facilities that require approval for visits
@@ -83,14 +83,14 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
      * 
      * @return Count of active facilities
      */
-    long countByIsActiveTrue();
+    long countByActiveTrue();
     
     /**
      * Count inactive facilities
      * 
      * @return Count of inactive facilities
      */
-    long countByIsActiveFalse();
+    long countByActiveFalse();
     
     /**
      * Find facilities with available parking

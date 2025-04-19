@@ -11,7 +11,7 @@ INSERT INTO officers (facility_id, name, position, department, duty_status, emai
 (1, 'Sarah Okonkwo', 'Deputy Director', 'Accounts', 'ON_DUTY', 's.okonkwo@finance.fct.gov.ng', '08012345601'),
 (2, 'Dr. Emmanuel Adewale', 'Director', 'Public Health', 'ON_DUTY', 'e.adewale@health.fct.gov.ng', '08023456700'),
 (2, 'Dr. Fatima Suleiman', 'Medical Officer', 'Primary Healthcare', 'ON_DUTY', 'f.suleiman@health.fct.gov.ng', '08023456701'),
-(3, 'John Okafor', 'Chief of Staff', 'Minister's Office', 'ON_DUTY', 'j.okafor@fct.gov.ng', '08034567800'),
+(3, 'John Okafor', 'Chief of Staff', 'Minister''s Office', 'ON_DUTY', 'j.okafor@fct.gov.ng', '08034567800'),
 (4, 'Blessing Nnamdi', 'Director', 'Approvals', 'ON_DUTY', 'b.nnamdi@development.fct.gov.ng', '08045678900');
 
 -- Purpose of Visit

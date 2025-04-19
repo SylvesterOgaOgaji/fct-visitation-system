@@ -37,6 +37,10 @@ public class PurposeOfVisit {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "facility_id")
+    private Facility facility;
 
     @PrePersist
     protected void onCreate() {
@@ -119,6 +123,23 @@ public class PurposeOfVisit {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public Facility getFacility() {
+        return facility;
+    }
+    
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+    
+    // Methods needed for test compatibility
+    public Long getPurposeId() {
+        return this.id;
+    }
+    
+    public void setPurposeId(long id) {
+        this.id = id;
     }
     
     // toString method

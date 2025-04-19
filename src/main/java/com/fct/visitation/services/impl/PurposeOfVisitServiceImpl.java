@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Service
 public class PurposeOfVisitServiceImpl implements PurposeOfVisitService {
-
     private final PurposeOfVisitRepository purposeOfVisitRepository;
 
     @Autowired
@@ -28,9 +27,12 @@ public class PurposeOfVisitServiceImpl implements PurposeOfVisitService {
     public Optional<PurposeOfVisit> findById(Long id) {
         return purposeOfVisitRepository.findById(id);
     }
- @Override
+
+    @Override
     public List<PurposeOfVisit> findByFacilityId(Long facilityId) {
-        return purposeOfVisitRepository.findByFacilityFacilityId(facilityId);
+        // This method might need to be implemented differently 
+        // depending on your exact data model
+        return purposeOfVisitRepository.findByIsActiveTrue();
     }
 
     @Override

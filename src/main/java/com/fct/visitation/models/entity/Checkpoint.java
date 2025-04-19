@@ -2,136 +2,106 @@ package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
-/**
- * Entity representing a security checkpoint in the FCT facilities
- */
 @Entity
 @Table(name = "checkpoints")
 public class Checkpoint {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name", nullable = false, length = 100)
+    
     private String name;
     
-    @Column(name = "description", length = 255)
-    private String description;
-    
-    @Column(name = "location", nullable = false, length = 100)
     private String location;
     
-    @Column(name = "checkpoint_type", nullable = false, length = 20)
-    private String checkpointType; // ENTRY, EXIT, FACILITY, PARKING
+    private String description;
+    
+    private boolean isActive;
+    
+    private String checkpointType; // ENTRY, EXIT, BOTH
     
     @ManyToOne
     @JoinColumn(name = "facility_id")
     private Facility facility;
     
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
-    
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-    
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
+    // Constructors
+    public Checkpoint() {
     }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    
+    public Checkpoint(Long id, String name, String location, String description, boolean isActive, String checkpointType, Facility facility) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.description = description;
+        this.isActive = isActive;
+        this.checkpointType = checkpointType;
+        this.facility = facility;
     }
-
+    
     // Getters and Setters
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    
     public String getLocation() {
         return location;
     }
-
+    
     public void setLocation(String location) {
         this.location = location;
     }
-
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public boolean isIsActive() {
+        return isActive;
+    }
+    
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+    
     public String getCheckpointType() {
         return checkpointType;
     }
-
+    
     public void setCheckpointType(String checkpointType) {
         this.checkpointType = checkpointType;
     }
-
+    
     public Facility getFacility() {
         return facility;
     }
-
+    
     public void setFacility(Facility facility) {
         this.facility = facility;
     }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    
+    // Alternative getter for locationName to maintain compatibility with existing code
+    public String getLocationName() {
+        return name;
     }
     
-    // toString method
-    @Override
-    public String toString() {
-        return "Checkpoint{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", location='" + location + '\'' +
-                ", checkpointType='" + checkpointType + '\'' +
-                ", isActive=" + isActive +
-                '}';
+    // Alternative setter for locationName to maintain compatibility with existing code
+    public void setLocationName(String locationName) {
+        this.name = locationName;
     }
 }

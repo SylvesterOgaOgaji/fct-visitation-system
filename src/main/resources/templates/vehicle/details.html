@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/fct-visitation/">FCT Visitation System</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">Vehicle Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Success message display -->
+                        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                            <span th:text="${successMessage}">Success message</span>
+                        </div>
+                        
+                        <!-- Error message display -->
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                            <span th:text="${errorMessage}">Error message</span>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Visitor Information:</strong>
+                            <p>
+                                <span th:text="${carDetails.visitor.firstName + ' ' + carDetails.visitor.lastName}">Visitor Name</span><br>
+                                <span th:text="${carDetails.visitor.email}">Email</span><br>
+                                <span th:text="${carDetails.visitor.phoneNumber}">Phone</span>
+                            </p>
+                        </div>
+                        
+                        <h4 class="mt-4 mb-3">Vehicle Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group mb-4">
+                                    <li class="list-group-item"><strong>Type:</strong> <span th:text="${carDetails.carType}">Car Type</span></li>
+                                    <li class="list-group-item"><strong>Registration Number:</strong> <span th:text="${carDetails.registrationNumber}">ABC123</span></li>
+                                    <li class="list-group-item"><strong>Model:</strong> <span th:text="${carDetails.model}">Toyota Camry</span></li>
+                                    <li class="list-group-item"><strong>Color:</strong> <span th:text="${carDetails.color}">White</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <div th:if="${carDetails.carType.name() == 'RENTED'}" class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="card-title mb-0">Driver Information</h5>
+                                    </div>
+                                    <div class="card-body" th:if="${driver != null}">
+                                        <p><strong>Name:</strong> <span th:text="${driver.name}">Driver Name</span></p>
+                                        <p><strong>License:</strong> <span th:text="${driver.licenseNumber}">License Number</span></p>
+                                        <p><strong>Contact:</strong> <span th:text="${driver.contactNumber}">Contact Number</span></p>
+                                        <p>
+                                            <strong>Verification Status:</strong> 
+                                            <span th:class="${driver.verificationStatus.name() == 'VERIFIED' ? 'badge bg-success' : (driver.verificationStatus.name() == 'REJECTED' ? 'badge bg-danger' : 'badge bg-warning')}"
+                                                  th:text="${driver.verificationStatus}">Status</span>
+                                        </p>
+                                        
+                                        <div th:if="${driver.verifiedBy != null}">
+                                            <p><strong>Verified By:</strong> <span th:text="${driver.verifiedBy.name}">Security Personnel</span></p>
+                                            <p><strong>Verification Time:</strong> <span th:text="${#temporals.format(driver.verificationTimestamp, 'dd-MM-yyyy HH:mm')}">Verification Time</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <a th:href="@{/visitor/confirmation(id=${carDetails.visitor.visitorId})}" class="btn btn-primary">Back to Confirmation</a>
+                                <a th:if="${carDetails.carType.name() == 'RENTED' && driver != null && driver.verificationStatus.name() == 'PENDING'}" 
+                                   th:href="@{/vehicle/verify-driver/{id}(id=${driver.driverId})}" 
+                                   class="btn btn-warning">Verify Driver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

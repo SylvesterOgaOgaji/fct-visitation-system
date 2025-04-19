@@ -20,7 +20,7 @@ public class QRCodeApiController {
 
     @PostMapping("/scan/{qrCode}")
     public ResponseEntity<?> scanQRCode(@PathVariable String qrCode, @RequestParam Long checkpointId) {
-        return visitorService.findByQrCode(qrCode)
+        return visitorService.getVisitorByQrCode(qrCode)
                 .map(visitor -> {
                     QRScanLog scanLog = qrScanLogService.recordScan(visitor, checkpointId);
                     return ResponseEntity.ok("Scan recorded successfully");

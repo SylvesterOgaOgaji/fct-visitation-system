@@ -1,5 +1,6 @@
 package com.fct.visitation.utils;
 
+import com.fct.visitation.models.entity.Visitor;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -25,5 +26,16 @@ public class QRCodeGenerator implements QRCodeGeneratorInterface {
         } catch (WriterException | IOException e) {
             throw new RuntimeException("Error generating QR Code", e);
         }
+    }
+    
+    @Override
+    public String generateQRCode(Visitor visitor) {
+        // Create a QR code with visitor information
+        String visitorInfo = "ID:" + visitor.getId() + 
+                            ",Name:" + visitor.getFirstName() + " " + visitor.getLastName() + 
+                            ",Email:" + visitor.getEmail();
+        
+        // Generate a QR code image with standard dimensions
+        return generateQRCodeImage(visitorInfo, 250, 250);
     }
 }

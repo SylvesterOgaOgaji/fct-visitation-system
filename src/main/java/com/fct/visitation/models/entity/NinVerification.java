@@ -1,72 +1,45 @@
 package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Entity representing a verified National Identification Number (NIN) from NIMC
- */
 @Entity
-@Table(name = "nin_verifications")
+@Table(name = "nin_verification")
 public class NinVerification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "nin", nullable = false, length = 20, unique = true)
-    private String nin;
-    
-    @Column(name = "first_name", length = 50)
-    private String firstName;
-    
-    @Column(name = "last_name", length = 50)
-    private String lastName;
-    
-    @Column(name = "middle_name", length = 50)
-    private String middleName;
-    
-    @Column(name = "gender", length = 10)
-    private String gender;
-    
-    @Column(name = "date_of_birth", length = 20)
-    private String dateOfBirth;
-    
-    @Column(name = "phone_number", length = 20)
-    private String phoneNumber;
-    
-    @Column(name = "address", length = 255)
-    private String address;
-    
-    @Column(name = "photo", columnDefinition = "TEXT")
-    private String photo;
-    
-    @Column(name = "signature", columnDefinition = "TEXT")
-    private String signature;
-    
-    @Column(name = "is_valid", nullable = false)
-    private Boolean isValid = false;
-    
-    @Column(name = "verification_date")
-    private LocalDateTime verificationDate;
-    
-    @Column(name = "expiry_date")
-    private LocalDateTime expiryDate;
-    
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-    
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
+    private String nin;
+    private String firstName;
+    private String lastName;
+    private LocalDate dateOfBirth;
+    private String state;
+    private String gender;
+    private String phoneNumber;
+    private boolean isVerified;
+    
+    // Add these missing fields
+    private LocalDateTime verificationTimestamp;
+    private Long contextId;
+
+    // Default constructor required by JPA
+    public NinVerification() {
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    // Constructor with parameters
+    public NinVerification(String nin, String firstName, String lastName, LocalDate dateOfBirth,
+                          String state, String gender, String phoneNumber, boolean isVerified) {
+        this.nin = nin;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.state = state;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.isVerified = isVerified;
     }
 
     // Getters and Setters
@@ -102,12 +75,20 @@ public class NinVerification {
         this.lastName = lastName;
     }
 
-    public String getMiddleName() {
-        return middleName;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getGender() {
@@ -118,14 +99,6 @@ public class NinVerification {
         this.gender = gender;
     }
 
-    public String getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -134,92 +107,28 @@ public class NinVerification {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {
-        return address;
+    public boolean isVerified() {
+        return isVerified;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public Boolean isValid() {
-        return isValid;
-    }
-
-    public void setValid(Boolean valid) {
-        isValid = valid;
-    }
-
-    public LocalDateTime getVerificationDate() {
-        return verificationDate;
-    }
-
-    public void setVerificationDate(LocalDateTime verificationDate) {
-        this.verificationDate = verificationDate;
-    }
-
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
     
-    /**
-     * Check if the verification has expired
-     * @return true if expired, false otherwise
-     */
-    public boolean isExpired() {
-        if (expiryDate == null) {
-            return false;
-        }
-        return LocalDateTime.now().isAfter(expiryDate);
+    // Add these missing methods
+    public LocalDateTime getVerificationTimestamp() {
+        return verificationTimestamp;
     }
-    
-    // toString method
-    @Override
-    public String toString() {
-        return "NinVerification{" +
-                "id=" + id +
-                ", nin='" + nin + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", isValid=" + isValid +
-                ", verificationDate=" + verificationDate +
-                ", expiryDate=" + expiryDate +
-                '}';
+
+    public void setVerificationTimestamp(LocalDateTime verificationTimestamp) {
+        this.verificationTimestamp = verificationTimestamp;
+    }
+
+    public Long getContextId() {
+        return contextId;
+    }
+
+    public void setContextId(Long contextId) {
+        this.contextId = contextId;
     }
 }

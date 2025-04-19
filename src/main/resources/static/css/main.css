@@ -1,408 +1,164 @@
-/* 
- * FCT Visitation System - Main Stylesheet
- * Theme based on Nigerian color scheme (green and white)
- */
-
- :root {
-    /* Color variables */
-    --fct-green: #008751;
-    --fct-green-light: #27ae60;
-    --fct-green-dark: #006c41;
-    --fct-white: #ffffff;
-    --fct-cream: #f7f9f9;
-    --fct-gray: #6c757d;
-    --fct-gray-light: #e9ecef;
-    --fct-black: #212529;
+/* Main styling for FCT Visitation System with official Nigerian Government colors */
+:root {
+    --nigeria-green: #008751;    /* Nigerian flag green */
+    --nigeria-white: #ffffff;    /* Nigerian flag white */
+    --nigeria-dark-green: #006a40; /* Darker green for contrast */
+    --nigeria-light-green: #4caf50; /* Lighter green for accents */
+    --nigeria-gold: #fcd116;     /* Golden accent color */
+    --nigeria-black: #000000;    /* For text and accents */
 }
 
-/* General Styles */
 body {
-    font-family: 'Roboto', 'Segoe UI', sans-serif;
-    color: var(--fct-black);
-    background-color: var(--fct-cream);
+    font-family: 'Segoe UI', 'Arial', 'Helvetica Neue', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
 }
 
-/* Customize Bootstrap Components */
-.bg-success {
-    background-color: var(--fct-green) !important;
+.navbar {
+    background-color: var(--nigeria-green) !important;
+    border-bottom: 3px solid var(--nigeria-gold);
 }
 
-.btn-success {
-    background-color: var(--fct-green);
-    border-color: var(--fct-green);
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
-.btn-success:hover, .btn-success:focus {
-    background-color: var(--fct-green-dark);
-    border-color: var(--fct-green-dark);
+.nav-link {
+    font-weight: 500;
 }
 
-.btn-outline-success {
-    color: var(--fct-green);
-    border-color: var(--fct-green);
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--nigeria-gold);
 }
 
-.btn-outline-success:hover, .btn-outline-success:focus {
-    background-color: var(--fct-green);
-    border-color: var(--fct-green);
-}
-
-.text-success {
-    color: var(--fct-green) !important;
-}
-
-/* Layout Components */
-.navbar-brand img {
-    filter: brightness(0) invert(1);
-}
-
-/* Sidebar Styling */
-.admin-sidebar, .security-sidebar, .officer-sidebar {
-    width: 250px;
-    transition: width 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .admin-sidebar, .security-sidebar, .officer-sidebar {
-        width: 60px;
-    }
-    
-    .admin-sidebar .nav-link span, 
-    .security-sidebar .nav-link span, 
-    .officer-sidebar .nav-link span {
-        display: none;
-    }
-    
-    .admin-sidebar .user-info, 
-    .security-sidebar .user-info, 
-    .officer-sidebar .user-info {
-        display: none;
-    }
-}
-
-.nav-link.active {
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left: 3px solid var(--fct-white);
-}
-
-/* Form Styling */
-.form-control:focus, .form-select:focus {
-    border-color: var(--fct-green-light);
-    box-shadow: 0 0 0 0.25rem rgba(0, 135, 81, 0.25);
-}
-
-/* Card Styling */
 .card {
-    border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+    border-color: #ddd;
 }
 
 .card-header {
-    border-top-left-radius: 0.5rem !important;
-    border-top-right-radius: 0.5rem !important;
+    background-color: var(--nigeria-green);
+    color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     font-weight: 500;
 }
 
-/* Progress Bar Styling */
-.progress {
-    overflow: visible;
+.btn-primary {
+    background-color: var(--nigeria-green) !important;
+    border-color: var(--nigeria-dark-green) !important;
 }
 
-.progress-bar {
-    position: relative;
+.btn-primary:hover {
+    background-color: var(--nigeria-dark-green) !important;
+}
+
+.btn-success {
+    background-color: var(--nigeria-green) !important;
+    border-color: var(--nigeria-dark-green) !important;
+}
+
+.bg-success {
+    background-color: var(--nigeria-green) !important;
+}
+
+/* QR Code styling */
+.qr-container {
+    text-align: center;
+    background: white;
+    padding: 2rem;
     border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin: 2rem auto;
+    max-width: 300px;
+    border: 2px solid var(--nigeria-gold);
 }
 
-/* Registration Steps Styling */
-.registration-steps {
+.qr-code {
+    margin-bottom: 1rem;
+}
+
+/* Form elements */
+.form-control:focus, .form-select:focus {
+    border-color: var(--nigeria-light-green);
+    box-shadow: 0 0 0 0.25rem rgba(0, 135, 81, 0.25);
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--nigeria-dark-green);
+}
+
+/* Nigerian government style embellishments */
+.nigeria-header {
+    position: relative;
     padding: 20px 0;
-}
-
-.step-circle {
-    width: 40px;
-    height: 40px;
-    background-color: var(--fct-gray-light);
-    color: var(--fct-gray);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin: 0 auto 10px;
-    transition: all 0.3s ease;
-}
-
-.step.active .step-circle {
-    background-color: var(--fct-green);
-    color: var(--fct-white);
-}
-
-.step-label {
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--fct-gray);
-    transition: all 0.3s ease;
-}
-
-.step.active .step-label {
-    color: var(--fct-green);
-    font-weight: 500;
-}
-
-.timeline-track {
-    height: 3px;
-    background-color: var(--fct-gray-light);
-    z-index: 1;
-}
-
-/* QR Code Container Styling */
-.qr-wrapper {
-    padding: 1rem;
-    background-color: var(--fct-white);
-    border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    display: inline-block;
-}
-
-/* Status Timeline */
-.status-timeline {
-    position: relative;
-    margin: 30px 0;
-}
-
-.timeline-steps {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    z-index: 2;
-}
-
-.timeline-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-.timeline-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--fct-gray-light);
-    border: 3px solid var(--fct-gray-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--fct-gray);
-    margin-bottom: 10px;
-    transition: all 0.3s ease;
-}
-
-.timeline-step.completed .timeline-icon {
-    background-color: var(--fct-green);
-    border-color: var(--fct-green);
-    color: var(--fct-white);
-}
-
-.timeline-info {
-    text-align: center;
-    max-width: 100px;
-}
-
-.timeline-title {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.timeline-date {
-    font-size: 0.8rem;
-    color: var(--fct-gray);
-}
-
-/* Alert Styling */
-.alert-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    margin-right: 15px;
-}
-
-/* Dashboard Activity Timeline */
-.activity-timeline {
-    position: relative;
-}
-
-.activity-item {
-    position: relative;
-    padding: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.activity-item:hover {
-    background-color: var(--fct-gray-light);
-}
-
-.activity-icon {
-    position: relative;
-    z-index: 2;
-}
-
-.activity-content {
-    flex: 1;
-}
-
-/* Print Specific Styles */
-@media print {
-    .navbar, .sidebar, .footer, .action-buttons {
-        display: none !important;
-    }
-    
-    .card {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    body {
-        background-color: var(--fct-white) !important;
-    }
-    
-    .qr-wrapper {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-    }
-}
-
-/* Nigerian-Specific Style Elements */
-.nigeria-flag-colors {
-    background: linear-gradient(to right, var(--fct-green) 33.33%, var(--fct-white) 33.33%, var(--fct-white) 66.66%, var(--fct-green) 66.66%);
-}
-
-.coat-of-arms-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: var(--fct-cream);
-    border-radius: 0.5rem;
-}
-
-/* Responsive Table */
-.table-responsive {
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-/* Form Step Animation */
-.form-step {
-    transition: all 0.3s ease;
-}
-
-/* Custom Badge for NIN Verified */
-.badge-nin-verified {
-    background-color: var(--fct-green);
-    color: var(--fct-white);
-    padding: 0.35em 0.65em;
-    font-size: 0.75em;
-    font-weight: 700;
-    border-radius: 0.25rem;
-}
-
-/* Scanner Styling */
-#qr-reader {
-    border: 2px solid var(--fct-green);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-#qr-reader video {
-    border-radius: 0.5rem;
-}
-
-/* Auth Pages Styling */
-.auth-wrapper {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    background-color: var(--fct-cream);
-}
-
-.auth-card {
-    max-width: 420px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.auth-logo {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 20px;
-}
-
-/* Accessibility Features */
-.form-control:focus, .form-select:focus, .btn:focus {
-    outline: 2px solid var(--fct-green);
-    outline-offset: 2px;
-}
-
-/* High Contrast Mode (for accessibility) */
-@media (prefers-contrast: high) {
-    :root {
-        --fct-green: #00733d;
-        --fct-green-dark: #00331d;
-    }
-    
-    .card {
-        border: 1px solid var(--fct-black);
-    }
-    
-    .form-control, .form-select {
-        border: 2px solid var(--fct-black);
-    }
-}
-
-/* Fonts for Nigerian Government Style */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Times New Roman', serif;
-}
-
-/* FCT Specific Elements */
-.fct-logo-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
     margin-bottom: 20px;
-    background-color: var(--fct-white);
-    border-bottom: 3px solid var(--fct-green);
 }
 
-.fct-letterhead {
-    text-align: center;
-    border-bottom: 2px solid var(--fct-green);
-    padding-bottom: 20px;
-    margin-bottom: 30px;
+.nigeria-header:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, var(--nigeria-green) 33.3%, var(--nigeria-white) 33.3%, var(--nigeria-white) 66.6%, var(--nigeria-green) 66.6%);
 }
 
-.fct-letterhead h1 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: var(--fct-green);
+.nigeria-coat-of-arms {
+    max-height: 80px;
+    margin: 10px 0;
 }
 
-.fct-letterhead h2 {
-    font-size: 1.4rem;
-    margin-bottom: 5px;
+/* Alert styling */
+.alert-success {
+    background-color: rgba(0, 135, 81, 0.1);
+    border-color: var(--nigeria-green);
+    color: var(--nigeria-dark-green);
 }
 
-.fct-letterhead p {
-    margin-bottom: 5px;
-    font-size: 0.9rem;
+.alert-info {
+    background-color: #e8f4fd;
+    border-color: #bee5eb;
+}
+
+/* Table styling */
+.table thead th {
+    background-color: var(--nigeria-green);
+    color: white;
+    border-color: var(--nigeria-dark-green);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 135, 81, 0.05);
+}
+
+/* Footer styling */
+footer {
+    background-color: var(--nigeria-dark-green);
+    color: white;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+footer a {
+    color: var(--nigeria-gold);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .nigeria-coat-of-arms {
+        max-height: 60px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 }
