@@ -1,0 +1,33 @@
+openapi: 3.0.1
+info:
+  title: FCT Visitation System API
+  description: API documentation for Federal Capital Territory Visitation Management System
+  version: 1.0.0
+  contact:
+    name: FCT ICT Department
+    email: support@fct.gov.ng
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://visitation.fct.gov.ng
+    description: Production server
+paths:
+  /api/auth/login:
+    post:
+      summary: Authenticate user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthResponse'
+  # ... more API endpoints ...

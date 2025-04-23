@@ -1,80 +1,63 @@
 package com.fct.visitation.controllers.api;
 
+import com.fct.visitation.models.dto.AlertResponse;
+import com.fct.visitation.models.dto.IncidentAlertRequest;
 import com.fct.visitation.models.entity.IncidentAlert;
-import com.fct.visitation.models.entity.SecurityIncident;
 import com.fct.visitation.repositories.IncidentAlertRepository;
-import com.fct.visitation.repositories.SecurityIncidentRepository;
+import com.fct.visitation.services.interfaces.NotificationService;
+import com.fct.visitation.services.interfaces.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-// Remove the unused import:
-// import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/security")
 public class SecurityApiController {
-
+    
     @Autowired
-    private SecurityIncidentRepository securityIncidentRepository;
-
+    private SecurityService securityService;
+    
+    @Autowired
+    private NotificationService notificationService;
+    
     @Autowired
     private IncidentAlertRepository incidentAlertRepository;
-
-    @GetMapping("/incidents")
-    public ResponseEntity<List<SecurityIncident>> getAllIncidents() {
-        return ResponseEntity.ok(securityIncidentRepository.findAll());
-    }
-
-    @GetMapping("/alerts")
-    public ResponseEntity<List<IncidentAlert>> getAllAlerts() {
-        return ResponseEntity.ok(incidentAlertRepository.findAll());
-    }
-
-    @PostMapping("/incidents")
-    public ResponseEntity<SecurityIncident> createIncident(@RequestBody SecurityIncident incident) {
-        return ResponseEntity.ok(securityIncidentRepository.save(incident));
-    }
-
+    
     @PostMapping("/alerts")
-    public ResponseEntity<IncidentAlert> createAlert(@RequestBody IncidentAlert alert) {
-        return ResponseEntity.ok(incidentAlertRepository.save(alert));
+    @PreAuthorize("hasAnyRole('SECURITY_PERSONNEL', 'ADMIN')")
+    public ResponseEntity<AlertResponse> createAlert(@RequestBody IncidentAlertRequest request) {
+        try {
+            IncidentAlert alert = new IncidentAlert();
+            alert.setTitle(request.getTitle());
+            alert.setDescription(request.getDescription());
+            alert.setLocation(request.getLocation());
+            alert.setSeverity(request.getSeverity());
+            alert.setReportedAt(LocalDateTime.now());
+            alert.setStatus(IncidentAlert.Status.REPORTED);
+            
+            IncidentAlert savedAlert = incidentAlertRepository.save(alert);
+            
+            // Send notifications
+            if ("HIGH".equals(request.getSeverity())) {
+                notificationService.sendEmergencyAlert(savedAlert);
+            } else {
+                notificationService.sendAlertNotification(savedAlert);
+            }
+            
+            return ResponseEntity.ok(new AlertResponse(true, "Alert created successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new AlertResponse(false, "Error creating alert: " + e.getMessage()));
+        }
     }
     
-    // Convert a SecurityIncident to an IncidentAlert
-    private IncidentAlert convertToAlert(SecurityIncident incident) {
-        IncidentAlert alert = new IncidentAlert();
-        alert.setTitle(incident.getTitle() != null ? incident.getTitle() : "");
-        alert.setDescription(incident.getDescription() != null ? incident.getDescription() : "");
-        
-        // Fix: Always provide a valid LocalDateTime
-        //alert.setTimestamp(incident.getTimestamp() != null ? incident.getTimestamp() : LocalDateTime.now());
-        // Alternative approach
-LocalDateTime timestamp;
-if (incident.getTimestamp() != null) {
-    timestamp = (LocalDateTime) incident.getTimestamp();
-} else {
-    timestamp = LocalDateTime.now();
-}
-alert.setTimestamp(timestamp);
-        alert.setLocation(incident.getLocation() != null ? incident.getLocation() : "");
-        alert.setSeverity(incident.getSeverity() != null ? incident.getSeverity() : "");
-        
-        // Add these if your IncidentAlert has them
-        alert.setReportedAt(LocalDateTime.now());
-        alert.setReportedBy("System");
-        alert.setStatus(IncidentAlert.Status.PENDING);
-        
-        return alert;
-    }
-    
-    // Method to handle the issue of type conversion
-    @PostMapping("/incidents-to-alerts")
-    public ResponseEntity<IncidentAlert> createAlertFromIncident(@RequestBody SecurityIncident incident) {
-        SecurityIncident savedIncident = securityIncidentRepository.save(incident);
-        IncidentAlert alert = convertToAlert(savedIncident);
-        return ResponseEntity.ok(incidentAlertRepository.save(alert));
+    @GetMapping("/alerts")
+    @PreAuthorize("hasAnyRole('SECURITY_PERSONNEL', 'ADMIN')")
+    public ResponseEntity<List<IncidentAlert>> getActiveAlerts() {
+        List<IncidentAlert> activeAlerts = incidentAlertRepository.findByStatus(IncidentAlert.Status.REPORTED);
+        return ResponseEntity.ok(activeAlerts);
     }
 }

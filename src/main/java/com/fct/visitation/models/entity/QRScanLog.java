@@ -2,7 +2,11 @@ package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Data; 
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor 
 @Entity
 @Table(name = "qr_scan_log")
 public class QRScanLog {
@@ -16,25 +20,14 @@ public class QRScanLog {
     private Visitor visitor;
     
     @ManyToOne
-    @JoinColumn(name = "checkpoint_id")  // Maps to Checkpoint entity
+    @JoinColumn(name = "checkpoint_id")
     private Checkpoint checkpoint;
     
-    @Column(name = "scanned_at")  // Renamed from "timestamp"
+    @Column(name = "scanned_at")
     private LocalDateTime scannedAt;
     
-    // Constructors
-    public QRScanLog() {}
+    // Adding the missing field
+    @Column(name = "scan_result", length = 100)
+    private String scanResult;
     
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public Visitor getVisitor() { return visitor; }
-    public void setVisitor(Visitor visitor) { this.visitor = visitor; }
-    
-    public Checkpoint getCheckpoint() { return checkpoint; }
-    public void setCheckpoint(Checkpoint checkpoint) { this.checkpoint = checkpoint; }
-    
-    public LocalDateTime getScannedAt() { return scannedAt; }
-    public void setScannedAt(LocalDateTime scannedAt) { this.scannedAt = scannedAt; }
-}
+    }

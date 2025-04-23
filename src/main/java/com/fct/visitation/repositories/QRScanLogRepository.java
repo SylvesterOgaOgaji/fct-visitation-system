@@ -19,21 +19,19 @@ public interface QRScanLogRepository extends JpaRepository<QRScanLog, Long> {
     
     Optional<QRScanLog> findFirstByVisitorOrderByScannedAtDesc(Visitor visitor);
     List<QRScanLog> findByScannedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+    // This method is valid after adding the scanResult field
     List<QRScanLog> findByScanResult(String scanResult);
     Optional<QRScanLog> findByVisitorAndCheckpoint(Visitor visitor, Checkpoint checkpoint);
 
-    // Updated query to use "scannedAt"
     @Query("SELECT c.id, COUNT(q) FROM QRScanLog q JOIN q.checkpoint c GROUP BY c.id")
     List<Object[]> countScansByCheckpoint();
 
-    // Updated query to use "scannedAt"
     @Query("SELECT HOUR(q.scannedAt), COUNT(q) FROM QRScanLog q GROUP BY HOUR(q.scannedAt)")
     List<Object[]> countScansByHour();
 
     List<QRScanLog> findByVisitorId(Long visitorId);
     List<QRScanLog> findByCheckpointId(Long checkpointId);
 
-    // Corrected method name to use "ScannedAt"
     Optional<QRScanLog> findTopByVisitorIdOrderByScannedAtDesc(Long visitorId);
 
     @Query("SELECT c.id, COUNT(q) FROM QRScanLog q JOIN q.checkpoint c " +
@@ -42,6 +40,4 @@ public interface QRScanLogRepository extends JpaRepository<QRScanLog, Long> {
         @Param("startDate") LocalDateTime startDate, 
         @Param("endDate") LocalDateTime endDate
     );
-
-    public Object findTopByVisitorIdOrderByTimestampDesc(Long visitorId);
 }

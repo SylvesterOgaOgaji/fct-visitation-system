@@ -29,12 +29,16 @@ public class OfficerServiceImpl implements OfficerService {
     public Optional<Officer> findById(Long id) {
         return officerRepository.findById(id);
     }
- @Override
+ //@Override
+    //public List<Officer> findByFacilityId(Long facilityId) {
+        //return officerRepository.findAll().stream()
+               // .filter(officer -> officer.getFacility().getFacilityId().equals(facilityId))
+              //  .collect(Collectors.toList());
+    //}
+    @Override
     public List<Officer> findByFacilityId(Long facilityId) {
-        return officerRepository.findAll().stream()
-                .filter(officer -> officer.getFacility().getFacilityId().equals(facilityId))
-                .collect(Collectors.toList());
-    }
+    return officerRepository.findByFacility_Id(facilityId);
+}
 
     @Override
     public Officer save(Officer officer) {

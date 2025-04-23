@@ -9,31 +9,18 @@ import java.util.List;
 
 @Repository
 public interface CarDetailsRepository extends JpaRepository<CarDetails, Long> {
+
+    // NEW METHOD ADDED TO FIX COMPILATION ERROR
     /**
-     * Find car details by visitor ID
-     * @param visitorId ID of the visitor
+     * Find car details by associated vehicle ID
+     * @param vehicleId ID of the vehicle
      * @return Optional of car details
      */
+    Optional<CarDetails> findByVehicle_VehicleId(Long vehicleId);
+
+    // Existing methods remain unchanged
     Optional<CarDetails> findByVisitorVisitorId(Long visitorId);
-
-    /**
-     * Find car details by driver ID
-     * @param driverId ID of the driver
-     * @return Optional of car details
-     */
     Optional<CarDetails> findByDriverDriverId(Long driverId);
-
-    /**
-     * Find car details by registration number
-     * @param registrationNumber Vehicle registration number
-     * @return Optional of car details
-     */
     Optional<CarDetails> findByRegistrationNumber(String registrationNumber);
-
-    /**
-     * Find car details by car type
-     * @param carType Type of the car
-     * @return List of car details
-     */
     List<CarDetails> findByCarType(CarDetails.CarType carType);
 }

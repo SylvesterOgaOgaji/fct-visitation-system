@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     
-    <include file="db/changelog/changes/001-initial-schema.sql"/>
-    <include file="db/changelog/changes/002-initial-data.sql"/>
+    <!-- Include SQL file for adding scan_result column -->
+    <changeSet id="2025-04-19-add-scan-result-column" author="system">
+        <sqlFile path="db/changelog/changes/2025-04-19-add_scan_result_column.sql"
+                 relativeToChangelogFile="false"
+                 encoding="UTF-8"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
     
 </databaseChangeLog>

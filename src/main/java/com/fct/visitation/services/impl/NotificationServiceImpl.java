@@ -87,30 +87,28 @@ public class NotificationServiceImpl implements NotificationService {
     public void notifyResponseTeam(IncidentAlert alert) {
         try {
             // Get the team from the repository using the team name stored in alert
-            String teamName = alert.getResponseTeam();
-            if (teamName != null && !teamName.isEmpty()) {
+            ResponseTeam team = alert.getAssignedResponseTeam();
+           
+            if (team != null) {
                 // Assuming you have a method to find ResponseTeam by name
-                ResponseTeam team = responseTeamRepository.findByTeamName(teamName);
-                
-                if (team != null) {
-                    String subject = "Security Incident Response Required - " + alert.getLocation();
-                    String message = buildResponseTeamMessage(alert);
-                    
-                    emailService.sendSimpleMessage(team.getEmail(), subject, message);
+            String subject = "Security Incident Response Required - " + alert.getLocation();
+            String message = buildResponseTeamMessage(alert);
+            
+            emailService.sendSimpleMessage(team.getEmail(), subject, message);
+
                     
                     // You could also implement SMS notifications here
                     // smsService.sendSms(team.getContactNumber(), shortMessage);
                     
                     logger.info("Response team notification sent to team: {}", team.getTeamId());
                 } else {
-                    logger.warn("Response team not found for name: {}", teamName);
+                    logger.warn("No response team assigned to alert: {}", alert.getId());
                 }
+            } catch (Exception e) {
+                logger.error("Failed to notify response team", e);
             }
-        } catch (Exception e) {
-            logger.error("Failed to notify response team", e);
         }
-    }
-    
+
     @Override
     public void sendAlertStatusUpdateNotification(IncidentAlert alert) {
         try {

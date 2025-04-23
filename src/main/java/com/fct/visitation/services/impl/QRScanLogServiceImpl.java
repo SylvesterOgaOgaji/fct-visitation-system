@@ -38,6 +38,10 @@ public class QRScanLogServiceImpl implements QRScanLogService {
     @Override
     @Transactional
     public QRScanLog save(QRScanLog qrScanLog) {
+        // Set default scan result if not provided
+        if (qrScanLog.getScanResult() == null) {
+            qrScanLog.setScanResult("SUCCESS");
+        }
         return qrScanLogRepository.save(qrScanLog);
     }
 
@@ -53,7 +57,7 @@ public class QRScanLogServiceImpl implements QRScanLogService {
 
     @Override
     public List<QRScanLog> findByCheckpointId(Long checkpointId) {
-        return qrScanLogRepository.findByCheckpoint_Id(checkpointId);
+        return qrScanLogRepository.findByCheckpointId(checkpointId);
     }
 
     @Override
@@ -90,6 +94,9 @@ public class QRScanLogServiceImpl implements QRScanLogService {
         scanLog.setCheckpoint(checkpoint);
 
         scanLog.setScannedAt(LocalDateTime.now());
+        // Set the scan result
+        scanLog.setScanResult("SUCCESS");
+        
         return qrScanLogRepository.save(scanLog);
     }
 

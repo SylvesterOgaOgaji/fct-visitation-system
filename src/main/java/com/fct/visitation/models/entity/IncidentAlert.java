@@ -17,7 +17,6 @@ public class IncidentAlert {
     private String location;
     private String severity;
     
-    // Add missing fields
     private LocalDateTime reportedAt;
     private String reportedBy;
     
@@ -25,12 +24,17 @@ public class IncidentAlert {
     @JoinColumn(name = "visitor_id")
     private Visitor visitor;
     
-    private String responseTeam;
+    @ManyToOne
+    @JoinColumn(name = "security_personnel_id")
+    private SecurityPersonnel reportedBySecurity;
+    
+    @ManyToOne
+    @JoinColumn(name = "response_team_id")
+    private ResponseTeam assignedResponseTeam;
     
     @Enumerated(EnumType.STRING)
     private Status status;
     
-    // Define the Status enum
     public enum Status {
         REPORTED, PENDING, IN_PROGRESS, RESOLVED, CLOSED
     }
@@ -87,7 +91,6 @@ public class IncidentAlert {
         this.severity = severity;
     }
     
-    // Add missing getters and setters
     public LocalDateTime getReportedAt() {
         return reportedAt;
     }
@@ -112,12 +115,21 @@ public class IncidentAlert {
         this.visitor = visitor;
     }
     
-    public String getResponseTeam() {
-        return responseTeam;
+    // New relationship getters and setters
+    public SecurityPersonnel getReportedBySecurity() {
+        return reportedBySecurity;
     }
     
-    public void setResponseTeam(String responseTeam) {
-        this.responseTeam = responseTeam;
+    public void setReportedBySecurity(SecurityPersonnel reportedBySecurity) {
+        this.reportedBySecurity = reportedBySecurity;
+    }
+    
+    public ResponseTeam getAssignedResponseTeam() {
+        return assignedResponseTeam;
+    }
+    
+    public void setAssignedResponseTeam(ResponseTeam assignedResponseTeam) {
+        this.assignedResponseTeam = assignedResponseTeam;
     }
     
     public Status getStatus() {

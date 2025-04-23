@@ -22,6 +22,8 @@
         <java.version>21</java.version>
         <zxing.version>3.5.2</zxing.version>
         <jjwt.version>0.12.3</jjwt.version>
+        <pdfbox.version>2.0.29</pdfbox.version>
+        <poi.version>5.2.3</poi.version>
     </properties>
 
     <dependencies>
@@ -46,6 +48,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <!-- Database -->
         <dependency>
@@ -63,10 +69,26 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version> <!-- Updated Lombok version -->
+            <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
         
+        <!-- Reporting -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- ZXing (QR Code) -->
         <dependency>
             <groupId>com.google.zxing</groupId>
@@ -124,13 +146,19 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <compilerArgs>
-                        <arg>-Xlint:unchecked</arg> <!-- Added lint configuration -->
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-parameters</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.32</version> <!-- Matches dependency version -->
+                            <version>1.18.32</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -139,7 +167,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>true</skipTests> <!-- Properly formatted -->
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>

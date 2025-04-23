@@ -64,7 +64,9 @@ public class JwtTokenProvider {
                 .getPayload();
 
         String username = claims.getSubject();
-        List<String> roles = claims.get("roles", List.class);
+        // Fix: Added type parameter to the generic List
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) claims.get("roles");
         
         List<SimpleGrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)

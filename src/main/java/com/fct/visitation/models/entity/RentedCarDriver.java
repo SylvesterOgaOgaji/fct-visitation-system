@@ -1,6 +1,7 @@
 package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rented_car_driver")
@@ -17,6 +18,14 @@ public class RentedCarDriver {
     
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;
+
+    public void setVerifiedById(Long verifiedById) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setVerificationTimestamp(LocalDateTime now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     // Define the VerificationStatus enum
     public enum VerificationStatus {

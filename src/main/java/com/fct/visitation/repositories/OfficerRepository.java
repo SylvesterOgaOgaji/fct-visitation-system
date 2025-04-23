@@ -47,6 +47,7 @@ public interface OfficerRepository extends JpaRepository<Officer, Long> {
      */
     Page<Officer> findByFacility(Facility facility, Pageable pageable);
     
+    List<Officer> findByFacility_Id(Long facilityId);
     /**
      * Find active officers
      */
