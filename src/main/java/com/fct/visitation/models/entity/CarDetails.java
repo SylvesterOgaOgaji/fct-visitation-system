@@ -13,8 +13,8 @@ public class CarDetails {
     private Long id;
 
     @ToString.Exclude
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
     public enum CarType { 
@@ -24,19 +24,26 @@ public class CarDetails {
     }
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "car_type")
+    @Column(name = "car_type", length = 20)
     private CarType carType;
 
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "visitor_id")
     private Visitor visitor;
 
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @Column(name = "registration_number", unique = true)
+    @Column(name = "registration_number", unique = true, length = 20)
     private String registrationNumber;
+
+    // Add other necessary fields
+    @Column(name = "manufacturer", length = 50)
+    private String manufacturer;
+    
+    @Column(name = "production_year")
+    private Integer productionYear;
 }

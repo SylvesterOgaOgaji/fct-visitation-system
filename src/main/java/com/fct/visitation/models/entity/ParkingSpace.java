@@ -23,6 +23,9 @@ public class ParkingSpace {
     private Long id;
     
     private String spaceNumber;
+
+    @Column(name = "location_code") // Maps to database column
+    private String locationCode; // Added missing field
     
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -46,7 +49,16 @@ public class ParkingSpace {
     
     private LocalDateTime releasedAt;
     
-    // Explicit setters for status and methods used in controllers
+    // Explicit getter/setter for locationCode
+    public String getLocationCode() {
+        return locationCode;
+    }
+
+    public void setLocationCode(String locationCode) {
+        this.locationCode = locationCode;
+    }
+
+    // Existing explicit methods...
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -75,7 +87,6 @@ public class ParkingSpace {
         this.releasedAt = releasedAt;
     }
     
-    // Explicit getters
     public Status getStatus() {
         return status;
     }

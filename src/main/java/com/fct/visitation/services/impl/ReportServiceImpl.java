@@ -1,57 +1,92 @@
 package com.fct.visitation.services.impl;
 
-import com.fct.visitation.exceptions.ReportGenerationException;
-import com.fct.visitation.models.dto.DailyVisitationReport;
-import com.fct.visitation.repositories.CheckpointLogsRepository;
-import com.fct.visitation.repositories.IncidentAlertRepository;
+import com.fct.visitation.models.dto.ReportRequest;
 import com.fct.visitation.repositories.VisitorRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
+import com.fct.visitation.services.interfaces.ReportService;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Map;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
-public class ReportServiceImpl {
+public class ReportServiceImpl implements ReportService {
 
     private final VisitorRepository visitorRepository;
-    private final CheckpointLogsRepository checkpointLogsRepository;
-    private final IncidentAlertRepository incidentAlertRepository;
 
-    public DailyVisitationReport generateDailyVisitationReport(LocalDate date) {
-        try {
-            LocalDateTime start = date.atStartOfDay();
-            LocalDateTime end = date.atTime(23, 59, 59);
-            
-            long totalVisitors = visitorRepository.countByCheckInTimeBetween(start, end);
-            long entries = checkpointLogsRepository.countByEntryTimeBetweenAndStatus(
-                start, end, "ENTERED");
-            long exits = checkpointLogsRepository.countByExitTimeBetweenAndStatus(
-                start, end, "EXITED");
-            
-            return new DailyVisitationReport(
-                date,
-                totalVisitors,
-                entries,
-                exits,
-                entries - exits
-            );
-        } catch (DataAccessException e) {
-            log.error("Database error generating daily report for {}", date, e);
-            throw new ReportGenerationException("Failed to generate daily report", e);
-        }
+    public ReportServiceImpl(VisitorRepository visitorRepository) {
+        this.visitorRepository = visitorRepository;
     }
 
-    // Temporary placeholder implementations
-    public byte[] generatePDFReport(Object data) {
-        throw new UnsupportedOperationException("PDF generation not implemented");
+    // New implementations
+    @Override
+    public Resource generateReport(ReportRequest request) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public byte[] generateExcelReport(Object data) {
-        throw new UnsupportedOperationException("Excel generation not implemented");
+    @Override
+    public Resource generateVisitorReport(String startDate, String endDate, String format) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Resource generateIncidentReport(String startDate, String endDate, String format) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Resource generateVehicleReport(String startDate, String endDate, String format) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Resource generateOccupancyReport(String facilityId, String startDate, String endDate, String format) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Map<String, Object> getVisitationStatistics() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> getSecurityStatistics() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> getParkingStatistics() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> generateVisitorReport(LocalDate startDate, LocalDate endDate) {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> generateSecurityReport(LocalDate startDate, LocalDate endDate) {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> generateParkingReport(LocalDate startDate, LocalDate endDate) {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, Object> generateFacilityReport(LocalDate startDate, LocalDate endDate) {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Resource generateExcelReport(String reportType, String startDate, String endDate) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Resource generatePdfReport(String reportType, String startDate, String endDate) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

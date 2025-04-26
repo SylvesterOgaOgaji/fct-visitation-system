@@ -1,8 +1,8 @@
 package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 @Entity

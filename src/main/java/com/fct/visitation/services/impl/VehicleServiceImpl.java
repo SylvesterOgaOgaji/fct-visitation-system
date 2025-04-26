@@ -1,5 +1,6 @@
 package com.fct.visitation.services.impl;
 
+import com.fct.visitation.exceptions.ResourceNotFoundException;
 import com.fct.visitation.models.entity.CarDetails;
 import com.fct.visitation.models.entity.Vehicle;
 import com.fct.visitation.repositories.CarDetailsRepository;
@@ -16,8 +17,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
 
-    private final VehicleRepository vehicleRepository = null; 
-    private final CarDetailsRepository carDetailsRepository = null; // ✅
+    private final VehicleRepository vehicleRepository = null;
+    private final CarDetailsRepository carDetailsRepository = null;
 
     @Override
     @Transactional
@@ -32,21 +33,14 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Optional<CarDetails> findById(Long id) {
-    Optional<CarDetails> carDetailsOpt = carDetailsRepository.findByVehicle_VehicleId(id); // ✅ Correct method name
-    // ...
- 
-        // If not found, you might want to create a new CarDetails or handle this differently
-        if (carDetailsOpt.isEmpty()) {
-            // Optional: try to find the vehicle and create CarDetails if it exists
-            Optional<Vehicle> vehicleOpt = vehicleRepository.findById(id);
-            if (vehicleOpt.isPresent()) {
-                CarDetails newCarDetails = new CarDetails();
-                newCarDetails.setVehicle(vehicleOpt.get());
-                return Optional.of(carDetailsRepository.save(newCarDetails));
-            }
-        }
-        
-        return carDetailsOpt;
+        // Changed to search by CarDetails' own ID
+        return carDetailsRepository.findById(id);
+    }
+
+    // Added new method to find CarDetails by vehicle ID
+    public CarDetails findCarDetailsByVehicleId(Long vehicleId) {
+        return carDetailsRepository.findByVehicle_Id(vehicleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found with ID: " + vehicleId));
     }
 
     @Override
@@ -85,4 +79,5 @@ public class VehicleServiceImpl implements VehicleService {
     public List<Vehicle> findVehiclesByType(Vehicle.VehicleType vehicleType) {
         return vehicleRepository.findByVehicleType(vehicleType);
     }
+
 }

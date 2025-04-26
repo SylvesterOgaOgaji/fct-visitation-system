@@ -4,23 +4,15 @@ import com.fct.visitation.models.entity.CarDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CarDetailsRepository extends JpaRepository<CarDetails, Long> {
-
-    // NEW METHOD ADDED TO FIX COMPILATION ERROR
-    /**
-     * Find car details by associated vehicle ID
-     * @param vehicleId ID of the vehicle
-     * @return Optional of car details
-     */
-    Optional<CarDetails> findByVehicle_VehicleId(Long vehicleId);
-
-    // Existing methods remain unchanged
-    Optional<CarDetails> findByVisitorVisitorId(Long visitorId);
-    Optional<CarDetails> findByDriverDriverId(Long driverId);
+    // Changed method names to match entity relationships
+    Optional<CarDetails> findByVehicle_Id(Long vehicleId);
+    Optional<CarDetails> findByVisitor_Id(Long visitorId);
+    Optional<CarDetails> findByDriver_Id(Long driverId);  // Now matches Driver.id
     Optional<CarDetails> findByRegistrationNumber(String registrationNumber);
     List<CarDetails> findByCarType(CarDetails.CarType carType);
 }

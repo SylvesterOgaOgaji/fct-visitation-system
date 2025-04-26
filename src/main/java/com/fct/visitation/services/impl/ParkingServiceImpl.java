@@ -4,6 +4,7 @@ import com.fct.visitation.models.entity.Facility;
 import com.fct.visitation.models.entity.ParkingSpace;
 import com.fct.visitation.models.entity.Visitor;
 import com.fct.visitation.models.enums.SpaceType;
+import com.fct.visitation.repositories.ParkingSpaceRepository;
 import com.fct.visitation.services.interfaces.ParkingService;
 import org.springframework.stereotype.Service;
 
@@ -14,64 +15,62 @@ import java.util.Optional;
 
 @Service
 public class ParkingServiceImpl implements ParkingService {
-    // Implement methods with stub implementations
+
+    private final ParkingSpaceRepository parkingSpaceRepository;
+
+    public ParkingServiceImpl(ParkingSpaceRepository parkingSpaceRepository) {
+        this.parkingSpaceRepository = parkingSpaceRepository;
+    }
 
     @Override
     public List<ParkingSpace> getAllParkingSpaces() {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.findAll();
     }
 
     @Override
     public List<ParkingSpace> getAvailableParkingSpaces() {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.findByStatus(ParkingSpace.Status.AVAILABLE);
     }
 
     @Override
     public ParkingSpace saveParkingSpace(ParkingSpace parkingSpace) {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.save(parkingSpace);
     }
 
     @Override
     public ParkingSpace getParkingSpaceById(Long id) {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<ParkingSpace> getParkingSpaceByVisitor(Visitor visitor) {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.findByVisitor_Id(visitor.getId());
     }
 
     @Override
     public List<ParkingSpace> getParkingSpacesByFacility(Facility facility) {
-        // Implementation
-        return null;
+        return parkingSpaceRepository.findByParkingArea_Facility_Id(facility.getId());
     }
 
     @Override
     public Map<String, Object> getParkingStatistics() {
-        // Implementation
-        return new HashMap<>();
+        Map<String, Object> stats = new HashMap<>();
+        // Add your statistic calculations here
+        return stats;
     }
 
     @Override
     public void deleteParkingSpace(Long id) {
-        // Implementation
+        parkingSpaceRepository.deleteById(id);
     }
 
     @Override
     public Optional<ParkingSpace> findAvailableParkingSpaceByType(SpaceType spaceType) {
-        // Implementation
-        return Optional.empty();
+        return parkingSpaceRepository.findTopBySpaceTypeAndStatus(spaceType, ParkingSpace.Status.AVAILABLE);
     }
 
     @Override
     public long countParkingSpacesByType(SpaceType spaceType) {
-        // Implementation
-        return 0;
+        return parkingSpaceRepository.countBySpaceType(spaceType);
     }
 }

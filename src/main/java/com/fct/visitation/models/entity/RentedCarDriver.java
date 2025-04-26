@@ -10,77 +10,77 @@ public class RentedCarDriver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "visitor_id")
+    private Visitor visitor;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
     
-    private Long carId;
+    private String nin;
+    
+    @Column(name = "driver_name")
     private String driverName;
-    private String driverLicense;
-    private String phoneNumber;
     
+    @Column(name = "driver_license")
+    private String driverLicense;
+    
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "verification_status")
     private VerificationStatus verificationStatus;
 
-    public void setVerifiedById(Long verifiedById) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    @Column(name = "verified_by_id")
+    private Long verifiedById;
 
-    public void setVerificationTimestamp(LocalDateTime now) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    // Define the VerificationStatus enum
+    @Column(name = "verification_timestamp")
+    private LocalDateTime verificationTimestamp;
+
     public enum VerificationStatus {
         PENDING, VERIFIED, REJECTED
     }
-    
-    public RentedCarDriver() {
-    }
-    
+
+    // Constructors
+    public RentedCarDriver() {}
+
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Visitor getVisitor() { return visitor; }
+    public void setVisitor(Visitor visitor) { this.visitor = visitor; }
+
+    public Vehicle getVehicle() { return vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
+
+    public String getNin() { return nin; }
+    public void setNin(String nin) { this.nin = nin; }
+
+    public String getDriverName() { return driverName; }
+    public void setDriverName(String driverName) { this.driverName = driverName; }
+
+    public String getDriverLicense() { return driverLicense; }
+    public void setDriverLicense(String driverLicense) { this.driverLicense = driverLicense; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public VerificationStatus getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(VerificationStatus verificationStatus) { 
+        this.verificationStatus = verificationStatus; 
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getVerifiedById() { return verifiedById; }
+    public void setVerifiedById(Long verifiedById) { 
+        this.verifiedById = verifiedById;
     }
-    
-    public Long getCarId() {
-        return carId;
-    }
-    
-    public void setCarId(Long carId) {
-        this.carId = carId;
-    }
-    
-    public String getDriverName() {
-        return driverName;
-    }
-    
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
-    }
-    
-    public String getDriverLicense() {
-        return driverLicense;
-    }
-    
-    public void setDriverLicense(String driverLicense) {
-        this.driverLicense = driverLicense;
-    }
-    
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-    
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-    
-    public VerificationStatus getVerificationStatus() {
-        return verificationStatus;
-    }
-    
-    public void setVerificationStatus(VerificationStatus verificationStatus) {
-        this.verificationStatus = verificationStatus;
+
+    public LocalDateTime getVerificationTimestamp() { return verificationTimestamp; }
+    public void setVerificationTimestamp(LocalDateTime verificationTimestamp) { 
+        this.verificationTimestamp = verificationTimestamp;
     }
 }
