@@ -1,0 +1,11 @@
+.git
+.github
+.gitignore
+README.md
+CONTRIBUTING.md
+LICENSE
+docs/
+target/
+fct-visitation-mobile/
+*.md
+*.log
