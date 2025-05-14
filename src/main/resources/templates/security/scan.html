@@ -621,13 +621,22 @@
             // Add a scan to the recent scans table
             function addToRecentScans(scan) {
                 const statusBadge = getStatusBadge(scan.status);
+                const escapeHtml = (unsafe) => {
+                    return unsafe
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                };
+                
                 const newRow = `
                     <tr>
                         <td>${scan.time}</td>
-                        <td>${scan.visitorName}</td>
+                        <td>${escapeHtml(scan.visitorName)}</td>
                         <td>${statusBadge}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary view-scan-btn" data-visitor-id="${scan.visitorId}">
+                            <button class="btn btn-sm btn-outline-primary view-scan-btn" data-visitor-id="${escapeHtml(scan.visitorId)}">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </td>
