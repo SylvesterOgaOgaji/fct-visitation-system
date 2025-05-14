@@ -1,4 +1,6 @@
 name: FCT Visitation System Backend CI
+permissions:
+  contents: read
 
 on:
   push:
