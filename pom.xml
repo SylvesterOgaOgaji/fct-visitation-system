@@ -23,7 +23,7 @@
         <zxing.version>3.5.2</zxing.version>
         <jjwt.version>0.12.3</jjwt.version>
         <pdfbox.version>2.0.29</pdfbox.version>
-        <poi.version>5.2.3</poi.version>
+        <poi.version>5.4.0</poi.version>
     </properties>
 
     <dependencies>
