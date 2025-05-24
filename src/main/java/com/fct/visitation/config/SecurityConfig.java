@@ -29,11 +29,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Your security configuration
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/", "/visitor/**", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().authenticated()
-            );
+            )
+            .formLogin()
+            .and()
+            .csrf().disable(); // Only disable CSRF if you understand the risks!
         return http.build();
     }
 
