@@ -5,6 +5,7 @@ import com.fct.visitation.services.interfaces.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import jakarta.persistence.Column; 
 
 @RestController
 @RequestMapping("/api/visitors")
@@ -12,6 +13,9 @@ public class VisitorController {
     
     @Autowired
     private VisitorService visitorService;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @GetMapping
     public List<Visitor> getAllVisitors() {

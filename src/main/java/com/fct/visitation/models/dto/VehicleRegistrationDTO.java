@@ -1,9 +1,10 @@
 package com.fct.visitation.models.dto;
 
 import com.fct.visitation.models.entity.CarDetails;
+import com.fct.visitation.models.enums.CarType;
 
 public class VehicleRegistrationDTO {
-    private CarDetails.CarType carType;
+    private CarType carType;
     private String registrationNumber;
     private String model;
     private String color;
@@ -15,7 +16,7 @@ public class VehicleRegistrationDTO {
     public VehicleRegistrationDTO() {
     }
     
-    public VehicleRegistrationDTO(CarDetails.CarType carType, String registrationNumber, String model, String color, RentedCarDriverDTO rentedCarDriver) {
+    public VehicleRegistrationDTO(CarType carType, String registrationNumber, String model, String color, RentedCarDriverDTO rentedCarDriver) {
         this.carType = carType;
         this.registrationNumber = registrationNumber;
         this.model = model;
@@ -24,11 +25,11 @@ public class VehicleRegistrationDTO {
     }
     
     // Getters and Setters
-    public CarDetails.CarType getCarType() {
+    public CarType getCarType() {
         return carType;
     }
     
-    public void setCarType(CarDetails.CarType carType) {
+    public void setCarType(CarType carType) {
         this.carType = carType;
     }
     

@@ -1,9 +1,11 @@
 package com.fct.visitation.models.entity;
 
+import com.fct.visitation.models.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Data
 @NoArgsConstructor
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 @Entity
 @Table(name = "vehicles")
 public class Vehicle {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,10 +40,12 @@ public class Vehicle {
     @Column(name = "driver_license")
     private String driverLicense;
 
-    public enum VehicleType {
-        PERSONAL,
-        RENTAL,
-        OFFICIAL,
-        OTHER
+    public Long getId() {
+        return id;
+    }
+
+    // Add the getRegistrationNumber method
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 }

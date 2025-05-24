@@ -9,10 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface CarDetailsRepository extends JpaRepository<CarDetails, Long> {
-    // Changed method names to match entity relationships
+    void deleteByVehicle_Id(Long vehicleId);
     Optional<CarDetails> findByVehicle_Id(Long vehicleId);
     Optional<CarDetails> findByVisitor_Id(Long visitorId);
-    Optional<CarDetails> findByDriver_Id(Long driverId);  // Now matches Driver.id
     Optional<CarDetails> findByRegistrationNumber(String registrationNumber);
-    List<CarDetails> findByCarType(CarDetails.CarType carType);
 }

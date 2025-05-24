@@ -1,6 +1,7 @@
 package com.fct.visitation.repositories;
 
 import com.fct.visitation.models.entity.IncidentAlert;
+import com.fct.visitation.models.entity.SecurityPersonnel;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,8 @@ public interface IncidentAlertRepository extends JpaRepository<IncidentAlert, Lo
     List<IncidentAlert> findByStatus(IncidentAlert.Status status);
     List<IncidentAlert> findByStatusIn(List<IncidentAlert.Status> statuses);
     List<IncidentAlert> findByVisitor_Id(Long visitorId);
-    List<IncidentAlert> findByReportedBy(String reportedBy);
-    List<IncidentAlert> findByAssignedResponseTeamTeamId(Long teamId);
+    List<IncidentAlert> findByReporter(SecurityPersonnel reporter);
+    List<IncidentAlert> findByReporter_Id(Long reporterId);
+    List<IncidentAlert> findByResponseTeam_Id(Long teamId);
     List<IncidentAlert> findByReportedAtBetween(LocalDateTime start, LocalDateTime end);
 }

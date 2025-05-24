@@ -1,20 +1,26 @@
 package com.fct.visitation.models.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "drivers")
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Must match the repository method reference
+    private Long id;
     
-    private String driverLicense;
-    private String driverName;
-    private String nin;
+    @Column(name = "license_number", unique = true)
+    private String licenseNumber;
+    
+    private String fullName;
+    
+    @Column(name = "national_id", unique = true)
+    private String nationalId;
+    
     private String phoneNumber;
+    
+    @Column(name = "is_approved", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean approved;
 }

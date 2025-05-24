@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Main Footer -->
+    <footer th:fragment="footer" class="footer bg-dark text-white py-4 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>FCT Visitation System</h5>
+                    <p>Federal Capital Territory Administration<br>Garki, Abuja, Nigeria</p>
+                    <div class="d-flex align-items-center mb-3">
+                        <img th:src="@{/images/coat-of-arms.png}" alt="Nigerian Coat of Arms" width="30" height="30" class="me-2">
+                        <span>Federal Republic of Nigeria</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="text-white" th:href="@{/}">Home</a></li>
+                        <li><a class="text-white" th:href="@{/visitor/registration}">Register Visit</a></li>
+                        <li><a class="text-white" th:href="@{/visitor/status}">Check Status</a></li>
+                        <li><a class="text-white" th:href="@{/contact}">Contact Us</a></li>
+                        <li><a class="text-white" th:href="@{/faq}">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Information</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> FCTA Complex, Central Business District, Abuja</li>
+                        <li><i class="fas fa-phone me-2"></i> +234 (0) 9 123 4567</li>
+                        <li><i class="fas fa-envelope me-2"></i> info@fcta.gov.ng</li>
+                    </ul>
+                    <div class="social-links mt-3">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-3 bg-secondary">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Federal Capital Territory Administration. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a class="text-white me-3" th:href="@{/privacy-policy}">Privacy Policy</a>
+                        <a class="text-white me-3" th:href="@{/terms-of-service}">Terms of Service</a>
+                        <a class="text-white" th:href="@{/accessibility}">Accessibility</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript fragment -->
+    <div th:fragment="scripts">
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Custom JS -->
+        <script th:src="@{/js/main.js}"></script>
+    </div>
+</body>
+</html>

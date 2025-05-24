@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Registration</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/fct-visitation/">FCT Visitation System</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title mb-0">Vehicle Registration</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Error message display -->
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                            <span th:text="${errorMessage}">Error message</span>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Visitor Information:</strong>
+                            <p>
+                                <span th:text="${visitor.firstName + ' ' + visitor.lastName}">Visitor Name</span><br>
+                                <span th:text="${visitor.email}">Email</span><br>
+                                <span th:text="${visitor.phoneNumber}">Phone</span>
+                            </p>
+                        </div>
+                        
+                        <form th:action="@{/vehicle/register/{id}(id=${visitor.visitorId})}" th:object="${vehicleRegistration}" method="post" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="carType" class="form-label">Vehicle Type</label>
+                                <select class="form-select" id="carType" th:field="*{carType}" required onchange="toggleDriverSection()">
+                                    <option value="">Select Vehicle Type</option>
+                                    <option value="OWN">Personal Vehicle</option>
+                                    <option value="RENTED">Rented Vehicle</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a vehicle type</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="registrationNumber" class="form-label">Vehicle Registration Number</label>
+                                <input type="text" class="form-control" id="registrationNumber" th:field="*{registrationNumber}" required>
+                                <div class="invalid-feedback">Registration number is required</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="model" class="form-label">Vehicle Model</label>
+                                    <input type="text" class="form-control" id="model" th:field="*{model}" required>
+                                    <div class="invalid-feedback">Vehicle model is required</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="color" class="form-label">Vehicle Color</label>
+                                    <input type="text" class="form-control" id="color" th:field="*{color}" required>
+                                    <div class="invalid-feedback">Vehicle color is required</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Rented Car Driver Information Section - Hidden by default -->
+                            <div id="driverSection" style="display: none;">
+                                <h4 class="mt-4 mb-3">Driver Information</h4>
+                                <div class="alert alert-warning">
+                                    <small>Note: For rented vehicles, driver verification is required for security purposes.</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="driverName" class="form-label">Driver's Full Name</label>
+                                    <input type="text" class="form-control" id="driverName" name="rentedCarDriver.name">
+                                    <div class="invalid-feedback">Driver's name is required</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="driverNin" class="form-label">Driver's NIN</label>
+                                    <input type="text" class="form-control" id="driverNin" name="rentedCarDriver.nin">
+                                    <div class="invalid-feedback">Driver's NIN is required</div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="driverLicense" class="form-label">Driver's License Number</label>
+                                        <input type="text" class="form-control" id="driverLicense" name="rentedCarDriver.licenseNumber">
+                                        <div class="invalid-feedback">License number is required</div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="driverContact" class="form-label">Driver's Contact Number</label>
+                                        <input type="text" class="form-control" id="driverContact" name="rentedCarDriver.contactNumber">
+                                        <div class="invalid-feedback">Contact number is required</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">Register Vehicle</button>
+                                <a th:href="@{/visitor/confirmation(id=${visitor.visitorId})}" class="btn btn-secondary">Skip Vehicle Registration</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation
+        (function() {
+            'use strict'
+            
+            var forms = document.querySelectorAll('.needs-validation')
+            
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        
+                        // Additional validation for driver fields if car type is RENTED
+                        if (document.getElementById('carType').value === 'RENTED') {
+                            const driverFields = ['driverName', 'driverNin', 'driverLicense', 'driverContact'];
+                            let driverFieldsValid = true;
+                            
+                            driverFields.forEach(function(fieldId) {
+                                const field = document.getElementById(fieldId);
+                                if (!field.value) {
+                                    field.classList.add('is-invalid');
+                                    driverFieldsValid = false;
+                                } else {
+                                    field.classList.remove('is-invalid');
+                                }
+                            });
+                            
+                            if (!driverFieldsValid) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                        }
+                        
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+        
+        // Toggle driver section based on car type
+        function toggleDriverSection() {
+            const carType = document.getElementById('carType').value;
+            const driverSection = document.getElementById('driverSection');
+            
+            if (carType === 'RENTED') {
+                driverSection.style.display = 'block';
+                
+                // Make driver fields required
+                const driverFields = ['driverName', 'driverNin', 'driverLicense', 'driverContact'];
+                driverFields.forEach(function(fieldId) {
+                    document.getElementById(fieldId).required = true;
+                });
+            } else {
+                driverSection.style.display = 'none';
+                
+                // Remove required attribute from driver fields
+                const driverFields = ['driverName', 'driverNin', 'driverLicense', 'driverContact'];
+                driverFields.forEach(function(fieldId) {
+                    const field = document.getElementById(fieldId);
+                    field.required = false;
+                    field.classList.remove('is-invalid');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

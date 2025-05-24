@@ -1,6 +1,10 @@
 package com.fct.visitation.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,17 +67,15 @@ public class JwtTokenProvider {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        String username = claims.getSubject();
-        // Fix: Added type parameter to the generic List
-        @SuppressWarnings("unchecked")
-        List<String> roles = (List<String>) claims.get("roles");
-        
-        List<SimpleGrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        return new UsernamePasswordAuthenticationToken(username, null, authorities);
-    }
+                String username = claims.getSubject();
+                List<?> roles = claims.get("roles", List.class);
+                
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role.toString()))
+                        .collect(Collectors.toList());
+            
+                return new UsernamePasswordAuthenticationToken(username, null, authorities);
+            }
 
     public boolean validateToken(String token) {
         try {

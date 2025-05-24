@@ -2,7 +2,11 @@ package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
+import com.fct.visitation.models.enums.CarType;
+
+import java.sql.Driver;
+
+import com.fct.visitation.models.entity.Visitor;
 
 @Entity
 @Data
@@ -11,39 +15,79 @@ public class CarDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
-
-    public enum CarType { 
-        SEDAN, 
-        SUV, 
-        TRUCK 
-    }
     
+    private String vin;
+    private String engineType;
+
+    @Column(name = "registration_number", unique = true)
+    private String registrationNumber;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "car_type", length = 20)
+    @Column(name = "car_type")
     private CarType carType;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
+    @OneToOne
     @JoinColumn(name = "visitor_id")
     private Visitor visitor;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "registration_number", unique = true, length = 20)
-    private String registrationNumber;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    // Add other necessary fields
-    @Column(name = "manufacturer", length = 50)
-    private String manufacturer;
-    
-    @Column(name = "production_year")
-    private Integer productionYear;
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
+    }
+
+    public String getEngineType() {
+        return engineType;
+    }
+
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public CarType getCarType() {
+        return carType;
+    }
+
+    public void setCarType(CarType carType) {
+        this.carType = carType;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public Visitor getVisitor() {
+        return visitor;
+    }
+
+    public void setVisitor(Visitor visitor) {
+        this.visitor = visitor;
+    }
 }

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/header :: head('Security Alerts')}">
+    <title>Security Alerts</title>
+</head>
+<body class="d-flex flex-column vh-100">
+    <!-- Header -->
+    <div th:replace="~{layout/header :: header}"></div>
+    
+    <div class="d-flex flex-grow-1">
+        <!-- Security Sidebar -->
+        <div th:replace="~{layout/sidebar :: securitySidebar}"></div>
+        
+        <main class="flex-grow-1 bg-light p-4">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-exclamation-triangle me-2"></i> Security Alerts</h2>
+                    <div>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#createAlertModal">
+                            <i class="fas fa-plus-circle me-2"></i> Create Alert
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Alert Status Overview -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-danger text-white">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title mb-0">High Priority</h6>
+                                        <h2 class="mb-0" th:text="${highPriorityCount}">2</h2>
+                                    </div>
+                                    <i class="fas fa-exclamation-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-warning text-dark">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title mb-0">Medium Priority</h6>
+                                        <h2 class="mb-0" th:text="${mediumPriorityCount}">5</h2>
+                                    </div>
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-info text-white">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title mb-0">Low Priority</h6>
+                                        <h2 class="mb-0" th:text="${lowPriorityCount}">8</h2>
+                                    </div>
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card shadow-sm bg-success text-white">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title mb-0">Resolved Today</h6>
+                                        <h2 class="mb-0" th:text="${resolvedTodayCount}">3</h2>
+                                    </div>
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Alerts -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0"><i class="fas fa-bell me-2"></i> Active Alerts</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 alert-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Location</th>
+                                        <th>Severity</th>
+                                        <th>Reported At</th>
+                                        <th>Status</th>
+                                        <th>Assigned Team</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${activeAlerts.empty}">
+                                        <td colspan="8" class="text-center py-3">No active alerts</td>
+                                    </tr>
+                                    <tr th:each="alert : ${activeAlerts}" th:class="${alert.severity == 'HIGH' ? 'table-danger' : (alert.severity == 'MEDIUM' ? 'table-warning' : 'table-info')}">
+                                        <td th:text="${'AL-' + alert.id}">AL-123</td>
+                                        <td th:text="${alert.title}">Unauthorized Access</td>
+                                        <td th:text="${alert.location}">Main Gate</td>
+                                        <td>
+                                            <span th:class="${'badge ' + (alert.severity == 'HIGH' ? 'bg-danger' : (alert.severity == 'MEDIUM' ? 'bg-warning text-dark' : 'bg-info'))}"
+                                                  th:text="${alert.severity}">HIGH</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(alert.reportedAt, 'dd-MM-yyyy HH:mm')}">12-04-2025 10:30</td>
+                                        <td th:text="${alert.status}">ACTIVE</td>
+                                        <td>
+                                            <span th:if="${alert.assignedTeam != null}" th:text="${alert.assignedTeam.name}">Alpha Team</span>
+                                            <span th:if="${alert.assignedTeam == null}" class="badge bg-secondary">Unassigned</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary view-alert-btn" th:data-alert-id="${alert.id}">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success resolve-alert-btn" th:data-alert-id="${alert.id}">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info assign-team-btn" th:data-alert-id="${alert.id}" 
+                                                        th:data-bs-toggle="modal" th:data-bs-target="#assignTeamModal">
+                                                    <i class="fas fa-users"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resolved Alerts -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0"><i class="fas fa-check-circle me-2"></i> Resolved Alerts</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 alert-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Severity</th>
+                                        <th>Reported At</th>
+                                        <th>Resolved At</th>
+                                        <th>Resolved By</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${resolvedAlerts.empty}">
+                                        <td colspan="7" class="text-center py-3">No resolved alerts</td>
+                                    </tr>
+                                    <tr th:each="alert : ${resolvedAlerts}">
+                                        <td th:text="${'AL-' + alert.id}">AL-123</td>
+                                        <td th:text="${alert.title}">Unauthorized Access</td>
+                                        <td>
+                                            <span th:class="${'badge ' + (alert.severity == 'HIGH' ? 'bg-danger' : (alert.severity == 'MEDIUM' ? 'bg-warning text-dark' : 'bg-info'))}"
+                                                  th:text="${alert.severity}">HIGH</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(alert.reportedAt, 'dd-MM-yyyy HH:mm')}">12-04-2025 10:30</td>
+                                        <td th:text="${#temporals.format(alert.resolvedAt, 'dd-MM-yyyy HH:mm')}">12-04-2025 11:15</td>
+                                        <td th:text="${alert.resolvedBy != null ? alert.resolvedBy.firstName + ' ' + alert.resolvedBy.lastName : 'N/A'}">John Smith</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary view-alert-btn" th:data-alert-id="${alert.id}">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Create Alert Modal -->
+    <div class="modal fade" id="createAlertModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Create Security Alert</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createAlertForm">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="alertTitle" class="form-label">Alert Title</label>
+                                <input type="text" class="form-control" id="alertTitle" name="title" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="alertSeverity" class="form-label">Severity</label>
+                                <select class="form-select" id="alertSeverity" name="severity" required>
+                                    <option value="LOW">Low - Information Only</option>
+                                    <option value="MEDIUM">Medium - Attention Required</option>
+                                    <option value="HIGH">High - Immediate Action Required</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alertDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="alertDescription" name="description" rows="4" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="alertLocation" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="alertLocation" name="location" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="responseTeamId" class="form-label">Assign Response Team</label>
+                                <select class="form-select" id="responseTeamId" name="responseTeamId">
+                                    <option value="">-- Optional: Assign Team --</option>
+                                    <option th:each="team : ${responseTeams}" 
+                                            th:value="${team.id}"
+                                            th:text="${team.name}">Alpha Response Team</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="submitAlertBtn">
+                        <i class="fas fa-bell me-2"></i> Create Alert
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Assign Team Modal -->
+    <div class="modal fade" id="assignTeamModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-users me-2"></i> Assign Response Team</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignTeamForm">
+                        <input type="hidden" id="assignAlertId" name="alertId">
+                        <div class="mb-3">
+                            <label for="assignTeamId" class="form-label">Select Response Team</label>
+                            <select class="form-select" id="assignTeamId" name="teamId" required>
+                                <option value="">-- Select Team --</option>
+                                <option th:each="team : ${responseTeams}" 
+                                        th:value="${team.id}"
+                                        th:text="${team.name + ' (' + team.members.size() + ' members)'}">
+                                    Alpha Response Team (5 members)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assignmentNotes" class="form-label">Assignment Notes</label>
+                            <textarea class="form-control" id="assignmentNotes" name="notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitAssignTeamBtn">
+                        <i class="fas fa-check me-2"></i> Assign Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alert Details Modal -->
+    <div class="modal fade" id="alertDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="alertDetailsHeader">
+                    <h5 class="modal-title" id="alertDetailsTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert-details">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6>Alert Information</h6>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        ID
+                                        <span id="detail-id" class="badge bg-secondary rounded-pill"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Severity
+                                        <span id="detail-severity" class="badge rounded-pill"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Status
+                                        <span id="detail-status" class="badge bg-secondary rounded-pill"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Location
+                                        <span id="detail-location"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Timeline</h6>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Reported At
+                                        <span id="detail-reported-at"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Reported By
+                                        <span id="detail-reported-by"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center detail-resolved-item">
+                                        Resolved At
+                                        <span id="detail-resolved-at"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center detail-resolved-item">
+                                        Resolved By
+                                        <span id="detail-resolved-by"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6>Description</h6>
+                            <div class="border rounded p-3" id="detail-description"></div>
+                        </div>
+                        
+                        <div class="mb-3 detail-resolution-notes">
+                            <h6>Resolution Notes</h6>
+                            <div class="border rounded p-3" id="detail-resolution-notes"></div>
+                        </div>
+                        
+                        <div class="mb-3" id="detail-team-section">
+                            <h6>Assigned Response Team</h6>
+                            <div class="border rounded p-3" id="detail-team">
+                                <p class="mb-0">No team assigned</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="resolve-form-section" class="d-none">
+                        <h6>Resolve Alert</h6>
+                        <form id="resolveAlertForm">
+                            <input type="hidden" id="resolveAlertId" name="alertId">
+                            <div class="mb-3">
+                                <label for="resolutionNotes" class="form-label">Resolution Notes</label>
+                                <textarea class="form-control" id="resolutionNotes" name="resolutionNotes" rows="3" required></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success d-none" id="resolveFormBtn">
+                        <i class="fas fa-check-circle me-2"></i> Mark as Resolved
+                    </button>
+                    <button type="button" class="btn btn-success d-none" id="showResolveFormBtn">
+                        <i class="fas fa-check-circle me-2"></i> Resolve Alert
+                    </button>
+                    <button type="button" class="btn btn-primary d-none" id="detailAssignTeamBtn" data-bs-toggle="modal" data-bs-target="#assignTeamModal">
+                        <i class="fas fa-users me-2"></i> Assign Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    
+    <!-- JavaScript -->
+    <div th:replace="~{layout/footer :: scripts}"></div>
+    
+    <script>
+        $(document).ready(function() {
+            // Submit new alert
+            $('#submitAlertBtn').click(function() {
+                const form = $('#createAlertForm');
+                
+                if (!$('#alertTitle').val() || !$('#alertDescription').val() || !$('#alertLocation').val() || !$('#alertSeverity').val()) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+                
+                // Create alert data
+                const alertData = {
+                    title: $('#alertTitle').val(),
+                    description: $('#alertDescription').val(),
+                    location: $('#alertLocation').val(),
+                    severity: $('#alertSeverity').val(),
+                    responseTeamId: $('#responseTeamId').val() || null
+                };
+                
+                // Send alert to server
+                $.ajax({
+                    url: '/security/alerts',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(alertData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Security alert created successfully!");
+                            $('#createAlertModal').modal('hide');
+                            // Reset form and reload page
+                            $('#createAlertForm')[0].reset();
+                            location.reload();
+                        } else {
+                            alert("Error creating alert: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error creating alert: " + error);
+                        console.error("Error creating security alert:", xhr, status, error);
+                    }
+                });
+            });
+            
+            // Assign team button
+            $('.assign-team-btn').click(function() {
+                const alertId = $(this).data('alert-id');
+                $('#assignAlertId').val(alertId);
+            });
+            
+            // Submit team assignment
+            $('#submitAssignTeamBtn').click(function() {
+                const form = $('#assignTeamForm');
+                
+                if (!$('#assignTeamId').val()) {
+                    alert("Please select a response team.");
+                    return;
+                }
+                
+                // Create assignment data
+                const assignmentData = {
+                    teamId: $('#assignTeamId').val(),
+                    notes: $('#assignmentNotes').val()
+                };
+                
+                // Send assignment to server
+                $.ajax({
+                    url: '/security/alerts/' + $('#assignAlertId').val() + '/assign',
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(assignmentData),
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Team assigned successfully!");
+                            $('#assignTeamModal').modal('hide');
+                            // Reset form and reload page
+                            $('#assignTeamForm')[0].reset();
+                            location.reload();
+                        } else {
+                            alert("Error assigning team: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error assigning team: " + error);
+                        console.error("Error assigning team:", xhr, status, error);
+                    }
+                });
+            });
+            
+            // View alert details
+            $('.view-alert-btn').click(function() {
+                const alertId = $(this).data('alert-id');
+                
+                // Load alert details from server
+                $.ajax({
+                    url: '/security/alerts/' + alertId,
+                    type: 'GET',
+                    success: function(alert) {
+                        // Set modal title and header color
+                        $('#alertDetailsTitle').text(alert.title);
+                        
+                        // Set header color based on severity
+                        let headerClass = 'bg-info';
+                        if (alert.severity === 'HIGH') {
+                            headerClass = 'bg-danger';
+                        } else if (alert.severity === 'MEDIUM') {
+                            headerClass = 'bg-warning';
+                        }
+                        
+                        // Apply header class and text color
+                        $('#alertDetailsHeader').removeClass().addClass('modal-header ' + headerClass + ' text-white');
+                        
+                        // Fill in alert details
+                        $('#detail-id').text('AL-' + alert.id);
+                        
+                        // Set severity badge
+                        let severityClass = 'bg-info';
+                        if (alert.severity === 'HIGH') {
+                            severityClass = 'bg-danger';
+                        } else if (alert.severity === 'MEDIUM') {
+                            severityClass = 'bg-warning text-dark';
+                        }
+                        $('#detail-severity').text(alert.severity).removeClass().addClass('badge ' + severityClass + ' rounded-pill');
+                        
+                        // Set status badge
+                        let statusClass = 'bg-success';
+                        if (alert.status === 'ACTIVE') {
+                            statusClass = 'bg-danger';
+                        } else if (alert.status === 'IN_PROGRESS') {
+                            statusClass = 'bg-warning text-dark';
+                        }
+                        $('#detail-status').text(alert.status).removeClass().addClass('badge ' + statusClass + ' rounded-pill');
+                        
+                        // Other details
+                        $('#detail-location').text(alert.location);
+                        $('#detail-description').text(alert.description);
+                        
+                        // Timeline info
+                        $('#detail-reported-at').text(formatDateTime(alert.reportedAt));
+                        $('#detail-reported-by').text(alert.reportedBy ? alert.reportedBy.firstName + ' ' + alert.reportedBy.lastName : 'N/A');
+                        
+                        // Resolution info
+                        if (alert.status === 'RESOLVED') {
+                            $('.detail-resolved-item').show();
+                            $('.detail-resolution-notes').show();
+                            $('#detail-resolved-at').text(formatDateTime(alert.resolvedAt));
+                            $('#detail-resolved-by').text(alert.resolvedBy ? alert.resolvedBy.firstName + ' ' + alert.resolvedBy.lastName : 'N/A');
+                            $('#detail-resolution-notes').text(alert.resolutionNotes || 'No notes provided');
+                            
+                            // Hide buttons for resolved alerts
+                            $('#showResolveFormBtn, #detailAssignTeamBtn').addClass('d-none');
+                        } else {
+                            $('.detail-resolved-item, .detail-resolution-notes').hide();
+                            
+                            // Show buttons for active alerts
+                            $('#showResolveFormBtn').removeClass('d-none');
+                            $('#detailAssignTeamBtn').removeClass('d-none');
+                        }
+                        
+                        // Team assignment info
+                        if (alert.assignedTeam) {
+                            $('#detail-team').html(`
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">${alert.assignedTeam.name}</h6>
+                                        <p class="mb-0">Members: ${alert.assignedTeam.members ? alert.assignedTeam.members.length : 0}</p>
+                                    </div>
+                                    <span class="badge bg-success">Assigned</span>
+                                </div>
+                            `);
+                            
+                            // If team is assigned, hide assign team button
+                            $('#detailAssignTeamBtn').addClass('d-none');
+                        } else {
+                            $('#detail-team').html('<p class="mb-0">No team assigned</p>');
+                        }
+                        
+                        // Set the alert ID for resolve form
+                        $('#resolveAlertId').val(alert.id);
+                        
+                        // Show the modal
+                        $('#alertDetailsModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error loading alert details: " + error);
+                        console.error("Error loading alert details:", xhr, status, error);
+                    }
+                });
+            });
+            
+            // Resolve alert button (in table)
+            $('.resolve-alert-btn').click(function() {
+                const alertId = $(this).data('alert-id');
+                $('#resolveAlertId').val(alertId);
+                
+                // Show resolve confirmation dialog
+                if (confirm("Are you sure you want to mark this alert as resolved?")) {
+                    // Show a prompt for resolution notes
+                    const notes = prompt("Please enter resolution notes:");
+                    if (notes !== null) {
+                        resolveAlert(alertId, notes);
+                    }
+                }
+            });
+            
+            // Show resolve form button (in details modal)
+            $('#showResolveFormBtn').click(function() {
+                // Hide details and show form
+                $('.alert-details').addClass('d-none');
+                $('#resolve-form-section').removeClass('d-none');
+                
+                // Hide this button and show submit button
+                $(this).addClass('d-none');
+                $('#resolveFormBtn').removeClass('d-none');
+                $('#detailAssignTeamBtn').addClass('d-none');
+            });
+            
+            // Submit resolve form
+            $('#resolveFormBtn').click(function() {
+                const alertId = $('#resolveAlertId').val();
+                const notes = $('#resolutionNotes').val();
+                
+                if (!notes) {
+                    alert("Please enter resolution notes.");
+                    return;
+                }
+                
+                resolveAlert(alertId, notes);
+            });
+            
+            // Function to resolve an alert
+            function resolveAlert(alertId, notes) {
+                $.ajax({
+                    url: '/security/alerts/' + alertId + '/status',
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        status: 'RESOLVED',
+                        resolutionNotes: notes
+                    }),
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Alert resolved successfully!");
+                            // Close modal and reload page
+                            $('#alertDetailsModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert("Error resolving alert: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error resolving alert: " + error);
+                        console.error("Error resolving alert:", xhr, status, error);
+                    }
+                });
+            }
+            
+            // Format date and time
+            function formatDateTime(dateTimeStr) {
+                if (!dateTimeStr) return 'N/A';
+                
+                try {
+                    const date = new Date(dateTimeStr);
+                    return date.toLocaleString('en-NG', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch (e) {
+                    return dateTimeStr;
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        /* Alert Table Styling */
+        .alert-table th, .alert-table td {
+            vertical-align: middle;
+        }
+        
+        /* Make the security sidebar fixed height on large screens */
+        @media (min-width: 992px) {
+            .security-sidebar {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+            
+            main.flex-grow-1 {
+                height: calc(100vh - 56px);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</body>
+</html>

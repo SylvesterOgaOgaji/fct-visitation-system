@@ -1,7 +1,7 @@
 package com.fct.visitation.services.impl;
 
 import com.fct.visitation.models.entity.Visitor;
-import com.fct.visitation.models.entity.VisitorStatus;
+import com.fct.visitation.models.enums.VisitorStatus;
 import com.fct.visitation.repositories.VisitorRepository;
 import com.fct.visitation.services.interfaces.VisitorService;
 import lombok.RequiredArgsConstructor;

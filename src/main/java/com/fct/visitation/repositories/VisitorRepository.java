@@ -1,7 +1,8 @@
 package com.fct.visitation.repositories;
 
 import com.fct.visitation.models.entity.Visitor;
-import com.fct.visitation.models.entity.VisitorStatus;
+import com.fct.visitation.models.enums.VehicleType;
+import com.fct.visitation.models.enums.VisitorStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
     Optional<Visitor> findByEmail(String email);
     Optional<Visitor> findByPhoneNumber(String phoneNumber);
     List<Visitor> findByStatus(VisitorStatus status);
+    List<Visitor> findByVehicle_VehicleType(VehicleType vehicleType);
     Optional<Visitor> findByQrCode(String qrCode);
     List<Visitor> findByVehicleIsNotNull();
 

@@ -1,65 +1,47 @@
 package com.fct.visitation.models.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "response_teams")
 public class ResponseTeam {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long teamId;
-    
-    @Column(nullable = false, length = 100)
-    private String teamName;
-    
-    @Column(nullable = false, length = 15)
+    @Column(name = "id") // changed from "team_id" to "id"
+    private Long id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "code", nullable = false, unique = true)
+    private String code;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "team_leader")
+    private String teamLeader;
+
+    @Column(name = "contact_number", nullable = false)
     private String contactNumber;
-    
-    @Column(length = 100)
+
+    @Column(name = "email", nullable = false)
     private String email;
-    
-    // Constructors
-    public ResponseTeam() {
-    }
-    
-    public ResponseTeam(Long teamId, String teamName, String contactNumber, String email) {
-        this.teamId = teamId;
-        this.teamName = teamName;
-        this.contactNumber = contactNumber;
-        this.email = email;
-    }
-    
-    // Getters and Setters
-    public Long getTeamId() {
-        return teamId;
-    }
-    
-    public void setTeamId(Long teamId) {
-        this.teamId = teamId;
-    }
-    
-    public String getTeamName() {
-        return teamName;
-    }
-    
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-    
-    public String getContactNumber() {
-        return contactNumber;
-    }
-    
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-    
-    public String getEmail() {
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "availability_status")
+    private String availabilityStatus;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    public String getContactEmail() {
         return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

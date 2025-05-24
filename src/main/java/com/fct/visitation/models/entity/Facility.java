@@ -12,40 +12,39 @@ public class Facility {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code", unique = true, nullable = false)
-    private String code;
-
-    @Column(name = "facility_name", nullable = false)
+    @Column(name = "facility_name")
     private String facilityName;
 
-    @Column(nullable = false, columnDefinition = "BIT DEFAULT TRUE")
-    private boolean active = true;
+    @Column(unique = true, nullable = false)
+    private String code;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
     @Column(nullable = false)
     private String address;
 
-    @Column(name = "contact_number")
     private String contactNumber;
-
     private String email;
 
     // Relationships
-    @OneToMany(mappedBy = "facility")
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
     private List<Visitor> visitors;
 
-    @OneToMany(mappedBy = "facility")
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
     private List<Officer> officers;
 
-    // Additional useful fields
-    @Column(name = "parking_capacity")
+    // Capacity fields
     private Integer parkingCapacity;
-
-    @Column(name = "visitor_capacity")
     private Integer visitorCapacity;
 
+    // Geolocation
     private Double latitude;
     private Double longitude;
 
-    @Column(name = "requires_approval", columnDefinition = "BIT DEFAULT FALSE")
-    private boolean requiresApproval;
+    @Column(name = "requires_approval")
+    private Boolean requiresApproval = false;
 }

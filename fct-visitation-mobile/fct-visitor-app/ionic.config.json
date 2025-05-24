@@ -1,7 +1,0 @@
-{
-  "name": "fct-visitor-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}

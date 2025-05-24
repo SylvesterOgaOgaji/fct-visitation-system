@@ -1,29 +1,50 @@
 package com.fct.visitation.services.impl;
 
-import com.fct.visitation.exceptions.ResourceNotFoundException;
 import com.fct.visitation.models.entity.CarDetails;
-import com.fct.visitation.models.entity.Vehicle;
-import com.fct.visitation.repositories.CarDetailsRepository;
 import com.fct.visitation.repositories.VehicleRepository;
+import com.fct.visitation.repositories.CarDetailsRepository;
+import com.fct.visitation.models.entity.Vehicle;
+import com.fct.visitation.models.enums.VehicleType;
 import com.fct.visitation.services.interfaces.VehicleService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
 
-    private final VehicleRepository vehicleRepository = null;
-    private final CarDetailsRepository carDetailsRepository = null;
+    private final VehicleRepository vehicleRepository;
+    private final CarDetailsRepository carDetailsRepository;
+
+    public VehicleServiceImpl(VehicleRepository vehicleRepository, CarDetailsRepository carDetailsRepository) {
+        this.vehicleRepository = vehicleRepository;
+        this.carDetailsRepository = carDetailsRepository;
+    }
 
     @Override
     @Transactional
     public Vehicle registerVehicle(Vehicle vehicle) {
+        if (vehicle.getRegistrationNumber() == null || 
+            ((String) vehicle.getRegistrationNumber()).trim().isEmpty()) {
+            throw new IllegalArgumentException("Registration number cannot be empty");
+        }
         return vehicleRepository.save(vehicle);
+    }
+
+    @Override
+    @Transactional
+    public Vehicle updateVehicle(Vehicle vehicle) {
+        if (vehicle.getId() == null) {
+            throw new IllegalArgumentException("Vehicle ID cannot be null");
+        }
+        return vehicleRepository.save(vehicle);
+    }
+
+    @Override
+    @Transactional
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
     }
 
     @Override
@@ -32,37 +53,18 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Optional<CarDetails> findById(Long id) {
-        // Changed to search by CarDetails' own ID
-        return carDetailsRepository.findById(id);
-    }
-
-    // Added new method to find CarDetails by vehicle ID
-    public CarDetails findCarDetailsByVehicleId(Long vehicleId) {
-        return carDetailsRepository.findByVehicle_Id(vehicleId)
-            .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found with ID: " + vehicleId));
-    }
-
-    @Override
-    public Optional<Vehicle> getVehicleByRegistrationNumber(String registrationNumber) {
-        return vehicleRepository.findByRegistrationNumber(registrationNumber);
-    }
-
-    @Override
     public List<Vehicle> getAllVehicles() {
         return vehicleRepository.findAll();
     }
 
     @Override
-    @Transactional
-    public Vehicle updateVehicle(Vehicle vehicle) {
-        return vehicleRepository.save(vehicle);
+    public Optional<CarDetails> findById(Long id) {
+        return carDetailsRepository.findById(id);
     }
 
     @Override
-    @Transactional
-    public void deleteVehicle(Long id) {
-        vehicleRepository.deleteById(id);
+    public Optional<Vehicle> getVehicleByRegistrationNumber(String registrationNumber) {
+        return vehicleRepository.findByRegistrationNumber(registrationNumber);
     }
 
     @Override
@@ -76,8 +78,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<Vehicle> findVehiclesByType(Vehicle.VehicleType vehicleType) {
+    public List<Vehicle> findVehiclesByType(VehicleType vehicleType) {
         return vehicleRepository.findByVehicleType(vehicleType);
     }
-
 }

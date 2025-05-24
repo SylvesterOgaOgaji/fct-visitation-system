@@ -1,7 +1,7 @@
 package com.fct.visitation.controllers.api;
 
 import com.fct.visitation.models.entity.Visitor;
-import com.fct.visitation.models.entity.VisitorStatus;
+import com.fct.visitation.models.enums.VisitorStatus;
 import com.fct.visitation.services.interfaces.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

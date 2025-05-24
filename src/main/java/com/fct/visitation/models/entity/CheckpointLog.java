@@ -14,26 +14,30 @@ import java.time.LocalDateTime;
 public class CheckpointLog {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(generator = "UUID")
     private String id;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "visitor_id")
     private Visitor visitor;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checkpoint_id")
     private Checkpoint checkpoint;
     
     private LocalDateTime entryTime;
-    
     private LocalDateTime exitTime;
     
-    private String status; // ENTERED, EXITED
+    @Enumerated(EnumType.STRING)
+    private LogStatus status;
     
     private String notes;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "processed_by")
     private SecurityPersonnel processedBy;
+
+    public enum LogStatus {
+        ENTERED, EXITED
+    }
 }

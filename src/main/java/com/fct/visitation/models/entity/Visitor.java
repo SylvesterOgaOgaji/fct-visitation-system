@@ -1,65 +1,75 @@
 package com.fct.visitation.models.entity;
 
+import com.fct.visitation.models.enums.VisitorStatus;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.Data;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 @Entity
-@Table(name = "visitors")
+@Table(name = "visitor")
+@Getter @Setter
 public class Visitor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // Ensure this matches foreign key references
     private Long id;
-
-    // Basic Information
-    @Column(name = "first_name")
+    
     private String firstName;
-    
-    @Column(name = "last_name")
     private String lastName;
-    
-    @Column(unique = true)
     private String email;
-    
-    @Column(name = "phone_number")
-    private String phoneNumber;
 
-    // Visitor Tracking
-    @Column(name = "qr_code")
-    private String qrCode;
-    
+    @Column(name = "phone_number")  
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private VisitorStatus status;
-    
-    // Timestamps
-    @Column(name = "registration_time")
-    private LocalDateTime registrationTime;
-    
-    @Column(name = "check_in_time")
-    private LocalDateTime checkInTime;
-    
-    @Column(name = "check_out_time")
-    private LocalDateTime checkOutTime;
 
-    // Cancellation
-    @Column(name = "cancellation_reason")
-    private String cancellationReason;
+    @ManyToOne
+    private Facility facility;
 
-    // Relationships
+    private LocalDateTime appointmentDatetime;
+
+    @ManyToOne
+    private Officer officer;
+
     @OneToOne
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
-    @ManyToOne
-    @JoinColumn(name = "facility_id")
-    private Facility facility;
+    @Column(name = "qr_code", unique = true)
+    private String qrCode;
 
-    @ManyToOne
-    @JoinColumn(name = "officer_id")
-    private Officer officer;
+    public VisitorStatus getStatus() {
+        return status;
+    }
 
-    // Appointment
-    @Column(name = "appointment_datetime")
-    private LocalDateTime appointmentDatetime;
+    public void setStatus(VisitorStatus status) {
+        this.status = status;
+    }
+    
+    private LocalDateTime registrationTime;
+    private LocalDateTime checkInTime;
+    private LocalDateTime checkOutTime;
+
+    public void setRegistrationTime(LocalDateTime now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setCheckInTime(LocalDateTime now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setCheckOutTime(LocalDateTime now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setCancellationReason(String reason) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public LocalDateTime getAppointmentDateTime() {
+        return appointmentDatetime;
+    }
 }
